@@ -7,7 +7,17 @@
 
 import 'package:ones_blog/app/app.dart';
 import 'package:ones_blog/bootstrap.dart';
+import 'package:ones_blog/domain/location_repository.dart';
+import 'package:ones_blog/domain/post_repository.dart';
 
 void main() {
-  bootstrap(() => const App());
+  final locationRepository = LocationRepository();
+  final postRepository = PostRepository();
+
+  bootstrap(
+    () => App(
+      locationRepository: locationRepository,
+      postRepository: postRepository,
+    ),
+  );
 }

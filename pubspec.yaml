@@ -9,11 +9,14 @@ environment:
 
 dependencies:
   bloc: ^8.0.3
+  carousel_slider: ^4.1.1
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
   flutter_localizations:
     sdk: flutter
+  http: ^0.13.5
   intl: ^0.17.0
 
 dev_dependencies:
@@ -26,3 +29,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - images/background/
+    - images/element/
+    - images/icon/
+    - images/text/

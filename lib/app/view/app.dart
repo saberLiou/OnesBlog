@@ -6,16 +6,41 @@
 // https://opensource.org/licenses/MIT.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:ones_blog/counter/counter.dart';
+import 'package:ones_blog/domain/location_repository.dart';
+import 'package:ones_blog/domain/post_repository.dart';
+import 'package:ones_blog/home/home.dart';
 import 'package:ones_blog/l10n/l10n.dart';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  const App({
+    super.key,
+    required LocationRepository locationRepository,
+    required PostRepository postRepository,
+  })  : _locationRepository = locationRepository,
+        _postRepository = postRepository;
+
+  final LocationRepository _locationRepository;
+  final PostRepository _postRepository;
+
+  @override
+  Widget build(BuildContext context) => MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider.value(value: _locationRepository),
+          RepositoryProvider.value(value: _postRepository),
+        ],
+        child: const AppView(),
+      );
+}
+
+class AppView extends StatelessWidget {
+  const AppView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         appBarTheme: const AppBarTheme(color: Color(0xFF13B9FF)),
         colorScheme: ColorScheme.fromSwatch(
@@ -27,7 +52,7 @@ class App extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const CounterPage(),
+      home: const HomePage(),
     );
   }
 }
