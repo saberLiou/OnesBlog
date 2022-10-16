@@ -60,14 +60,9 @@ class _LocationsCarouselSlider extends StatelessWidget {
   const _LocationsCarouselSlider({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final locations = context.select(
-      (LocationsCubit cubit) => cubit.state.locations!,
-    );
-    return Builder(
-      builder: (context) {
-        final locationsState = context.watch<LocationsCubit>().state;
-        return Column(
+  Widget build(BuildContext context) =>
+      BlocBuilder<LocationsCubit, LocationsState>(
+        builder: (context, state) => Column(
           children: [
             CarouselSlider(
               options: CarouselOptions(
@@ -78,7 +73,7 @@ class _LocationsCarouselSlider extends StatelessWidget {
                     context.read<LocationsCubit>().setPage(index),
               ),
               items: [
-                for (final location in locations) ...[
+                for (final location in state.locations!) ...[
                   Container(
                     width: MediaQuery.of(context).size.width / 1.5,
                     decoration: BoxDecoration(
@@ -100,7 +95,8 @@ class _LocationsCarouselSlider extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for (MapEntry locationEntry in locations.asMap().entries) ...[
+                  for (MapEntry<dynamic, dynamic> locationEntry
+                      in state.locations!.asMap().entries) ...[
                     Container(
                       width: SpaceUnit.base,
                       height: SpaceUnit.base,
@@ -114,9 +110,7 @@ class _LocationsCarouselSlider extends StatelessWidget {
                           0,
                           0,
                           0,
-                          (locationsState.currentPage == locationEntry.key)
-                              ? 0.9
-                              : 0.4,
+                          (state.currentPage == locationEntry.key) ? 0.9 : 0.4,
                         ),
                       ),
                     ),
@@ -125,8 +119,6 @@ class _LocationsCarouselSlider extends StatelessWidget {
               ),
             ),
           ],
-        );
-      },
-    );
-  }
+        ),
+      );
 }

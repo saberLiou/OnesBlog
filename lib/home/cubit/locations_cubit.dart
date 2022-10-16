@@ -8,44 +8,29 @@ part 'locations_state.dart';
 
 class LocationsCubit extends Cubit<LocationsState> {
   LocationsCubit({
-    required LocationRepository locationRepository,
-  })  : _locationRepository = locationRepository,
-        super(const LocationsState());
+    required this.locationRepository,
+  }) : super(const LocationsState());
 
-  final LocationRepository _locationRepository;
+  final LocationRepository locationRepository;
 
   Future<void> fetchLocations({required int categoryId, int limit = 10}) async {
-    emit(
-      LocationsState(
-        status: BlocCubitStatus.loading,
-        locations: state.locations,
-      ),
-    );
+    emit(state.copyWith(status: BlocCubitStatus.loading));
 
     try {
-      final locations = await _locationRepository.listLocations(
+      final locations = await locationRepository.listLocations(
         categoryId: categoryId,
         limit: limit,
       );
       emit(
-        LocationsState(
+        state.copyWith(
           status: BlocCubitStatus.success,
           locations: locations,
         ),
       );
     } on Exception {
-      emit(
-        LocationsState(
-          status: BlocCubitStatus.failure,
-          locations: state.locations,
-        ),
-      );
+      emit(state.copyWith(status: BlocCubitStatus.failure));
     }
   }
 
-  void setPage(int page) => emit(LocationsState(
-        status: state.status,
-        locations: state.locations,
-        currentPage: page,
-      ));
+  void setPage(int page) => emit(state.copyWith(currentPage: page));
 }

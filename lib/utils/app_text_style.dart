@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:ones_blog/utils/constants/space_unit.dart';
 
 extension AppTextStyle on TextStyle {
   static const title = TextStyle(
-    fontSize: 16,
+    fontSize: SpaceUnit.tripleBase,
     color: Colors.black,
   );
 
   static const content = TextStyle(
-    fontSize: 14,
+    fontSize: SpaceUnit.doubleBase,
     color: Colors.black,
+  );
+
+  static const alertContent = TextStyle(
+    fontSize: SpaceUnit.doubleBase,
+    color: Colors.red,
   );
 }

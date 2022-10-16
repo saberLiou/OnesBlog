@@ -7,3 +7,4 @@ bricks:
   cubit: ^0.1.3
   model: ^0.3.7
   cubit_page: ^0.2.0
+  hydrated_cubit: ^0.2.0

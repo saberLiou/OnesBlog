@@ -1,9 +1,71 @@
 {
     "@@locale": "en",
+    "appName": "OnesBlog",
     "counterAppBarTitle": "Counter",
     "@counterAppBarTitle": {
         "description": "Text shown in the AppBar of the Counter Page"
     },
     "community": "Community",
-    "locationsFetchErrorMessage": "Couldn't get any location."
+    "locationsFetchErrorMessage": "Couldn't get any location.",
+    "placeholder": "Please enter your {field}.",
+    "@placeholder": {
+        "placeholders": {
+            "field": {
+                "type": "String"
+            }
+        }
+    },
+    "requiredText": "*Required",
+    "requiredErrorText": "Please fill out this field.",
+    "emailErrorText": "Please enter a valid email address.",
+    "minErrorText": "Value must be less than or equal to {min}.",
+    "@minErrorText": {
+        "placeholders": {
+            "min": {
+                "type": "int"
+            }
+        }
+    },
+    "sameErrorText": "{field} and {comparedField} are not same.",
+    "@sameErrorText": {
+        "placeholders": {
+            "field": {
+                "type": "String"
+            },
+            "comparedField": {
+                "type": "String"
+            }
+        }
+    },
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "submittingMessage": "Submitting...",
+    "submittedFailureMessage": "Submitted failed, please try again.",
+    "loginOrRegister": "Login/Register",
+    "loginPageTitle": "Welcome back.",
+    "login": "Login",
+    "loginSuccessMessage": "Login success!",
+    "registerPageTitle": "Create an account.",
+    "register": "Register",
+    "registerSuccessMessage": "Register success, please head for your mailbox to receive the verification letter.",
+    "logout": "Logout",
+    "loggingOutMessage": "Logging out...",
+    "logoutSuccessMessage": "Logout success!",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Please confirm your password.",
+    "forgetPasswordTitle": "Forget password?",
+    "verifyCode": "Verify code",
+    "unverifiedMessage": "Unverified, please try again.",
+    "verifiedMessage": "Verified, welcome to {appName}!",
+    "@verifiedMessage": {
+        "placeholders": {
+            "appName": {
+                "type": "String"
+            }
+        }
+    },
+    "resendVerifyCodeTitle": "Resend verify code"
 }

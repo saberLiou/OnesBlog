@@ -11,6 +11,17 @@ class LocationsState extends Equatable {
   final List<Location>? locations;
   final int currentPage;
 
+  LocationsState copyWith({
+    BlocCubitStatus? status,
+    List<Location>? locations,
+    int? currentPage,
+  }) =>
+      LocationsState(
+        status: status ?? this.status,
+        locations: locations ?? this.locations,
+        currentPage: currentPage ?? this.currentPage,
+      );
+
   @override
   List<Object?> get props => [status, locations, currentPage];
 }

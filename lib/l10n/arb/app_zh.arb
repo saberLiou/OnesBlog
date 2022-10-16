@@ -1,5 +1,67 @@
 {
     "@@locale": "zh",
+    "appName": "玩食部落",
     "community": "社群",
-    "locationsFetchErrorMessage": "無法取得店家列表"
+    "locationsFetchErrorMessage": "無法取得店家列表",
+    "placeholder": "請輸入您的{field}",
+    "@placeholder": {
+        "placeholders": {
+            "field": {
+                "type": "String"
+            }
+        }
+    },
+    "requiredText": "*必填",
+    "requiredErrorText": "請填寫這個欄位。",
+    "emailErrorText": "請輸入正確的電子郵件格式",
+    "minErrorText": "值必須大於或等於 {min}。",
+    "@minErrorText": {
+        "placeholders": {
+            "min": {
+                "type": "int"
+            }
+        }
+    },
+    "sameErrorText": "{field}與{comparedField}不一致。",
+    "@sameErrorText": {
+        "placeholders": {
+            "field": {
+                "type": "String"
+            },
+            "comparedField": {
+                "type": "String"
+            }
+        }
+    },
+    "submit": "送出",
+    "cancel": "取消",
+    "submittingMessage": "送出中...",
+    "submittedFailureMessage": "送出失敗，請重新嘗試。",
+    "loginOrRegister": "登入/註冊",
+    "loginPageTitle": "歡迎回來",
+    "login": "登入",
+    "loginSuccessMessage": "登入成功！",
+    "registerPageTitle": "創建帳號",
+    "register": "註冊",
+    "registerSuccessMessage": "註冊成功，請至您的信箱查收驗證信。",
+    "logout": "登出",
+    "loggingOutMessage": "登出中...",
+    "logoutSuccessMessage": "登出成功！",
+    "email": "電子信箱",
+    "username": "用戶名稱",
+    "password": "密碼",
+    "confirmPassword": "確認密碼",
+    "confirmPasswordPlaceholder": "請再次輸入您的密碼",
+    "forgetPasswordTitle": "忘記密碼？",
+    "verifyCode": "驗證碼",
+    "unverifiedMessage": "驗證失敗，請重新嘗試。",
+    "verifiedMessage": "驗證通過，歡迎加入{appName}！",
+    "@verifiedMessage": {
+        "placeholders": {
+            "appName": {
+                "type": "String"
+            }
+        }
+    },
+    "resendVerifyCodeTitle": "重寄驗證信"
 }

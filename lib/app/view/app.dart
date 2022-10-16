@@ -7,28 +7,32 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:ones_blog/domain/location_repository.dart';
 import 'package:ones_blog/domain/post_repository.dart';
+import 'package:ones_blog/domain/user_repository.dart';
 import 'package:ones_blog/home/home.dart';
 import 'package:ones_blog/l10n/l10n.dart';
 
 class App extends StatelessWidget {
   const App({
     super.key,
-    required LocationRepository locationRepository,
-    required PostRepository postRepository,
-  })  : _locationRepository = locationRepository,
-        _postRepository = postRepository;
+    required this.userRepository,
+    required this.locationRepository,
+    required this.postRepository,
+  });
 
-  final LocationRepository _locationRepository;
-  final PostRepository _postRepository;
+  final UserRepository userRepository;
+  final LocationRepository locationRepository;
+  final PostRepository postRepository;
 
   @override
   Widget build(BuildContext context) => MultiRepositoryProvider(
         providers: [
-          RepositoryProvider.value(value: _locationRepository),
-          RepositoryProvider.value(value: _postRepository),
+          RepositoryProvider.value(value: userRepository),
+          RepositoryProvider.value(value: locationRepository),
+          RepositoryProvider.value(value: postRepository),
         ],
         child: const AppView(),
       );
@@ -39,6 +43,8 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    EasyLoading.instance.userInteractions = false;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -53,6 +59,7 @@ class AppView extends StatelessWidget {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       home: const HomePage(),
+      builder: EasyLoading.init(),
     );
   }
 }

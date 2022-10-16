@@ -10,14 +10,17 @@ environment:
 dependencies:
   bloc: ^8.0.3
   carousel_slider: ^4.1.1
+  device_info_plus: ^5.0.5
   equatable: ^2.0.5
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
+  flutter_easyloading: ^3.0.5
   flutter_localizations:
     sdk: flutter
   http: ^0.13.5
   intl: ^0.17.0
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   bloc_test: ^9.0.3

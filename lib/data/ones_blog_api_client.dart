@@ -33,19 +33,33 @@ class OnesBlogApiClient {
       : _httpClient = httpClient ?? http.Client();
 
   static const _baseUrl = 'onesblog.herokuapp.com';
+  static const _endpointPrefix = '/api/';
   final http.Client _httpClient;
+
+  String _prefix(String uri) => _endpointPrefix + uri;
 
   Future<List<dynamic>> index({
     required String uri,
     Map<String, dynamic>? queryParams,
   }) async {
-    final response = await _get(Uri.https(_baseUrl, '/api/$uri', queryParams));
+    final response = await _get(Uri.https(_baseUrl, _prefix(uri), queryParams));
 
     try {
       return response.data as List;
     } catch (_) {
       throw JsonDeserializationException();
     }
+  }
+
+  Future<dynamic> store({
+    required String uri,
+    required Map<String, dynamic>? inputParams,
+    String? token,
+  }) async {
+    final response =
+        await _post(Uri.https(_baseUrl, _prefix(uri)), inputParams, token);
+
+    return response.data;
   }
 
   Future<Response> _get(Uri uri) async {
@@ -66,9 +80,42 @@ class OnesBlogApiClient {
       throw HttpRequestFailure(response.statusCode);
     }
 
+    return _decodeResponseBody(response.body);
+  }
+
+  Future<Response> _post(
+    Uri uri,
+    Map<String, dynamic>? body,
+    String? token,
+  ) async {
+    http.Response response;
+
+    try {
+      response = await _httpClient.post(
+        uri,
+        headers: {
+          HttpHeaders.acceptHeader: ContentType.json.toString(),
+          if (token != null) ...{
+            HttpHeaders.authorizationHeader: 'Bearer $token',
+          }
+        },
+        body: body,
+      );
+    } catch (_) {
+      throw HttpException();
+    }
+
+    if (![200, 201].contains(response.statusCode)) {
+      throw HttpRequestFailure(response.statusCode);
+    }
+
+    return _decodeResponseBody(response.body);
+  }
+
+  Response _decodeResponseBody(String body) {
     try {
       return Response.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>,
+        jsonDecode(body) as Map<String, dynamic>,
       );
     } catch (_) {
       throw JsonDecodeException();
