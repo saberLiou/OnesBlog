@@ -2,9 +2,28 @@
     "@@locale": "zh",
     "appName": "玩食部落",
     "community": "社群",
-    "locationsFetchErrorMessage": "無法取得店家列表",
-    "placeholder": "請輸入您的{field}",
+    "restaurant": "餐廳",
+    "spot": "景點",
+    "lodging": "旅宿",
+    "more": "看更多{category}",
+    "@more": {
+        "placeholders": {
+            "category": {
+                "type": "String"
+            }
+        }
+    },
+    "listFetchErrorMessage": "沒有符合的結果",
+    "placeholder": "請輸入{field}",
     "@placeholder": {
+        "placeholders": {
+            "field": {
+                "type": "String"
+            }
+        }
+    },
+    "selectPlaceholder": "請選擇{field}",
+    "@selectPlaceholder": {
         "placeholders": {
             "field": {
                 "type": "String"
@@ -36,11 +55,20 @@
     "submit": "送出",
     "cancel": "取消",
     "submittingMessage": "送出中...",
+    "submittedSuccessMessage": "送出成功！",
     "submittedFailureMessage": "送出失敗，請重新嘗試。",
     "loginOrRegister": "登入/註冊",
     "loginPageTitle": "歡迎回來",
     "login": "登入",
     "loginSuccessMessage": "登入成功！",
+    "loginFirstTo": "請先登入，再{action}。",
+    "@loginFirstTo": {
+        "placeholders": {
+            "action": {
+                "type": "String"
+            }
+        }
+    },
     "registerPageTitle": "創建帳號",
     "register": "註冊",
     "registerSuccessMessage": "註冊成功，請至您的信箱查收驗證信。",
@@ -63,5 +91,9 @@
             }
         }
     },
-    "resendVerifyCodeTitle": "重寄驗證信"
+    "resendVerifyCodeTitle": "重寄驗證信",
+    "addPost": "新增文章",
+    "title": "標題",
+    "content": "內文",
+    "emptyLocationMessage": "請選擇一個地點。"
 }

@@ -56,8 +56,11 @@ class OnesBlogApiClient {
     required Map<String, dynamic>? inputParams,
     String? token,
   }) async {
-    final response =
-        await _post(Uri.https(_baseUrl, _prefix(uri)), inputParams, token);
+    final response = await _post(
+      Uri.https(_baseUrl, _prefix(uri)),
+      inputParams,
+      token,
+    );
 
     return response.data;
   }

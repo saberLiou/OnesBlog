@@ -22,10 +22,10 @@ class MenuView extends StatelessWidget {
     SizeHandler.init(context);
     final l10n = context.l10n;
 
-    return BlocProvider(
-      create: (_) => MenuCubit(
+    return BlocProvider<MenuCubit>.value(
+      value: MenuCubit(
         userRepository: context.read<UserRepository>(),
-      )..getToken(),
+      )..init(),
       child: SizedBox(
         width: SizeHandler.screenWidth,
         child: Container(
@@ -107,7 +107,7 @@ class MenuView extends StatelessWidget {
                               break;
                           }
                         },
-                        builder: (context, state) => state.token == null
+                        builder: (context, state) => !state.isLogin
                             ? MenuButton(
                                 title: l10n.loginOrRegister,
                                 imageUrl: 'images/element/login.png',

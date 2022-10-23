@@ -14,17 +14,18 @@ class MenuCubit extends Cubit<MenuState> {
 
   final UserRepository userRepository;
 
-  Future<void> getToken() async =>
-      emit(state.copyWith(token: userRepository.getToken()));
+  void init() => emit(
+        state.copyWith(isLogin: userRepository.getToken() != null),
+      );
 
   Future<void> removeToken() async {
-    emit(state.copyWith(status: BlocCubitStatus.loading, token: state.token));
+    emit(state.copyWith(status: BlocCubitStatus.loading));
 
     try {
       await userRepository.logout();
-      emit(state.copyWith(status: BlocCubitStatus.success, token: null));
+      emit(state.copyWith(status: BlocCubitStatus.success, isLogin: false));
     } on Exception {
-      emit(state.copyWith(status: BlocCubitStatus.failure, token: null));
+      emit(state.copyWith(status: BlocCubitStatus.failure, isLogin: false));
     }
   }
 }

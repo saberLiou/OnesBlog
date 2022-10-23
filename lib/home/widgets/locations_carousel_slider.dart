@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ones_blog/domain/location_repository.dart';
 import 'package:ones_blog/home/cubit/locations_cubit.dart';
 import 'package:ones_blog/l10n/l10n.dart';
+import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/app_text_style.dart';
 import 'package:ones_blog/utils/constants/space_unit.dart';
 import 'package:ones_blog/utils/enums/bloc_cubit_status.dart';
@@ -17,17 +18,15 @@ class LocationsCarouselSlider extends StatelessWidget {
   final int categoryId;
 
   @override
-  Widget build(BuildContext context) => BlocProvider(
-        create: (_) => LocationsCubit(
+  Widget build(BuildContext context) => BlocProvider<LocationsCubit>.value(
+        value: LocationsCubit(
           locationRepository: context.read<LocationRepository>(),
         )..fetchLocations(categoryId: categoryId, limit: 6),
-        child: const _Content(),
+        child: _Content(),
       );
 }
 
 class _Content extends StatelessWidget {
-  const _Content({super.key});
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -46,7 +45,7 @@ class _Content extends StatelessWidget {
       case BlocCubitStatus.failure:
         return Center(
           key: const Key('content_failure_text'),
-          child: Text(l10n.locationsFetchErrorMessage),
+          child: Text(l10n.listFetchErrorMessage),
         );
       case BlocCubitStatus.success:
         return const _LocationsCarouselSlider(
@@ -66,24 +65,89 @@ class _LocationsCarouselSlider extends StatelessWidget {
           children: [
             CarouselSlider(
               options: CarouselOptions(
-                height: 260,
-                aspectRatio: 2,
+                height: 300,
+                aspectRatio: SpaceUnit.quarterBase,
                 enlargeCenterPage: true,
                 onPageChanged: (index, _) =>
                     context.read<LocationsCubit>().setPage(index),
               ),
               items: [
                 for (final location in state.locations!) ...[
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width / 1.5,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromRGBO(198, 201, 203, 1),
-                    ),
-                    child: Center(
-                      child: Text(
-                        location.name,
-                        style: AppTextStyle.title,
+                    child: Card(
+                      color: AppColors.muted,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(
+                            SpaceUnit.doubleBase,
+                          ),
+                        ),
+                      ),
+                      elevation: SpaceUnit.halfBase,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // TODO: real images
+                          Container(
+                            height: SpaceUnit.base * 20,
+                            width: double.infinity,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(SpaceUnit.doubleBase),
+                                topRight: Radius.circular(SpaceUnit.doubleBase),
+                              ),
+                            ),
+                            child: Image.network(
+                              'https://picsum.photos/seed/picsum/1024/768',
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: SpaceUnit.base,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  location.name,
+                                  style: AppTextStyle.title,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(
+                              right: SpaceUnit.base,
+                              bottom: SpaceUnit.base,
+                              left: SpaceUnit.base,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // TODO: address -> city + area.
+                                Text(
+                                  location.address,
+                                  style: AppTextStyle.content,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                    ),
+                                    Text(
+                                      location.avgScore.toString(),
+                                      style: AppTextStyle.content,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

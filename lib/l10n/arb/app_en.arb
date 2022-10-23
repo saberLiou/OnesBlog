@@ -1,14 +1,29 @@
 {
     "@@locale": "en",
     "appName": "OnesBlog",
-    "counterAppBarTitle": "Counter",
-    "@counterAppBarTitle": {
-        "description": "Text shown in the AppBar of the Counter Page"
-    },
     "community": "Community",
-    "locationsFetchErrorMessage": "Couldn't get any location.",
-    "placeholder": "Please enter your {field}.",
+    "restaurant": "Restaurant",
+    "spot": "Spot",
+    "lodging": "Lodging",
+    "more": "More {category}",
+    "@more": {
+        "placeholders": {
+            "category": {
+                "type": "String"
+            }
+        }
+    },
+    "listFetchErrorMessage": "No matched results",
+    "placeholder": "Please enter {field}.",
     "@placeholder": {
+        "placeholders": {
+            "field": {
+                "type": "String"
+            }
+        }
+    },
+    "selectPlaceholder": "Please select {field}.",
+    "@selectPlaceholder": {
         "placeholders": {
             "field": {
                 "type": "String"
@@ -40,11 +55,20 @@
     "submit": "Submit",
     "cancel": "Cancel",
     "submittingMessage": "Submitting...",
+    "submittedSuccessMessage": "Submit success!",
     "submittedFailureMessage": "Submitted failed, please try again.",
     "loginOrRegister": "Login/Register",
     "loginPageTitle": "Welcome back.",
     "login": "Login",
     "loginSuccessMessage": "Login success!",
+    "loginFirstTo": "Please login first to {action}.",
+    "@loginFirstTo": {
+        "placeholders": {
+            "action": {
+                "type": "String"
+            }
+        }
+    },
     "registerPageTitle": "Create an account.",
     "register": "Register",
     "registerSuccessMessage": "Register success, please head for your mailbox to receive the verification letter.",
@@ -67,5 +91,9 @@
             }
         }
     },
-    "resendVerifyCodeTitle": "Resend verify code"
+    "resendVerifyCodeTitle": "Resend verify code",
+    "addPost": "Add new post",
+    "title": "Title",
+    "content": "Content",
+    "emptyLocationMessage": "Please select a place."
 }

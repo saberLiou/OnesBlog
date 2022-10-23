@@ -3,21 +3,21 @@ part of 'menu_cubit.dart';
 class MenuState extends Equatable {
   const MenuState({
     this.status = BlocCubitStatus.initial,
-    this.token,
+    this.isLogin = false,
   });
 
   final BlocCubitStatus status;
-  final String? token;
+  final bool isLogin;
 
   MenuState copyWith({
     BlocCubitStatus? status,
-    required String? token,
+    bool? isLogin,
   }) =>
       MenuState(
         status: status ?? this.status,
-        token: token,
+        isLogin: isLogin ?? this.isLogin,
       );
 
   @override
-  List<Object?> get props => [status, token];
+  List<Object?> get props => [status, isLogin];
 }

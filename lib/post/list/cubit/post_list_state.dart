@@ -1,12 +1,31 @@
 part of 'post_list_cubit.dart';
 
-enum PostListStatus { initial, loading, success, failure }
-
 class PostListState extends Equatable {
-  const PostListState({this.status = PostListStatus.initial});
+  const PostListState({
+    this.status = BlocCubitStatus.initial,
+    this.isLogin = false,
+    this.tab = LocationCategory.restaurants,
+    this.posts,
+  });
 
-  final PostListStatus status;
+  final BlocCubitStatus status;
+  final bool isLogin;
+  final LocationCategory tab;
+  final List<Post>? posts;
+
+  PostListState copyWith({
+    BlocCubitStatus? status,
+    bool? isLogin,
+    LocationCategory? tab,
+    List<Post>? posts,
+  }) =>
+      PostListState(
+        status: status ?? this.status,
+        isLogin: isLogin ?? this.isLogin,
+        tab: tab ?? this.tab,
+        posts: posts ?? this.posts,
+      );
 
   @override
-  List<Object> get props => [status];
+  List<Object?> get props => [status, isLogin, tab, posts];
 }

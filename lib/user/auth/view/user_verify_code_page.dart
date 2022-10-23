@@ -10,7 +10,7 @@ import 'package:ones_blog/user/auth/user_auth.dart';
 import 'package:ones_blog/user/auth/widgets/form_text_field.dart';
 import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/app_duration.dart';
-import 'package:ones_blog/utils/constants/popped_from_page.dart';
+import 'package:ones_blog/utils/constants/popped_from_page_arguments.dart';
 import 'package:ones_blog/utils/constants/space_unit.dart';
 import 'package:ones_blog/utils/enums/bloc_cubit_status.dart';
 import 'package:ones_blog/utils/form_validator.dart';
@@ -19,21 +19,12 @@ import 'package:ones_blog/utils/size_handler.dart';
 class UserVerifyCodePage extends StatelessWidget {
   const UserVerifyCodePage({super.key});
 
-  static Route<String> route(String email) => MaterialPageRoute(
-        builder: (context) => MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (_) => MenuCubit(
-                userRepository: context.read<UserRepository>(),
-              ),
-            ),
-            BlocProvider(
-              create: (_) => UserVerifyCodeCubit(
-                userRepository: context.read<UserRepository>(),
-                email: email,
-              ),
-            )
-          ],
+  static Route<PoppedFromPageArguments> route(String email) => MaterialPageRoute(
+        builder: (context) => BlocProvider(
+          create: (context) => UserVerifyCodeCubit(
+            userRepository: context.read<UserRepository>(),
+            email: email,
+          ),
           child: const UserVerifyCodePage(),
         ),
       );
@@ -70,10 +61,12 @@ class _UserVerifyCodeViewState extends State<UserVerifyCodeView> {
       child: Scaffold(
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxScrolled) => [
-            const FixedAppBar(
+            FixedAppBar(
               homeLeadingIcon: false,
-              openMenuIcon: false,
-              backResult: PoppedFromPage.userVerifyCode,
+              openMenuIcon: null,
+              arguments: PoppedFromPageArguments(
+                page: PoppedFromPage.userVerifyCode,
+              ),
             ),
           ],
           body: SingleChildScrollView(

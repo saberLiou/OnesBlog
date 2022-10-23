@@ -7,9 +7,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:ones_blog/app/view/menu_view.dart';
+import 'package:ones_blog/app/widgets/app_button.dart';
 import 'package:ones_blog/app/widgets/fixed_app_bar.dart';
 import 'package:ones_blog/home/widgets/locations_carousel_slider.dart';
 import 'package:ones_blog/home/widgets/welcome_background_image.dart';
+import 'package:ones_blog/l10n/l10n.dart';
 import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/constants/space_unit.dart';
 import 'package:ones_blog/utils/enums/location_category.dart';
@@ -32,6 +34,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeHandler.init(context);
+    final l10n = context.l10n;
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -93,7 +96,7 @@ class HomeView extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  height: 1600,
+                  height: 1700,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image:
@@ -104,6 +107,32 @@ class HomeView extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
+                      const SizedBox(
+                          height: SpaceUnit.threeQuarterBase,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          AppButton(
+                            height: SpaceUnit.base * 6,
+                            width: SpaceUnit.base * 13,
+                            title: l10n.restaurant,
+                            onPressed: () {},
+                          ),
+                          AppButton(
+                            height: SpaceUnit.base * 6,
+                            width: SpaceUnit.base * 13,
+                            title: l10n.spot,
+                            onPressed: () {},
+                          ),
+                          AppButton(
+                            height: SpaceUnit.base * 6,
+                            width: SpaceUnit.base * 13,
+                            title: l10n.lodging,
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
                       for (final category in LocationCategory.values) ...[
                         Padding(
                           padding:
@@ -120,6 +149,15 @@ class HomeView extends StatelessWidget {
                           ),
                         ),
                         LocationsCarouselSlider(categoryId: category.id),
+                        const SizedBox(
+                          height: SpaceUnit.threeQuarterBase,
+                        ),
+                        AppButton(
+                          height: SpaceUnit.base * 6,
+                          width: MediaQuery.of(context).size.width / 2,
+                          title: l10n.more(l10n.restaurant.toLowerCase()),
+                          onPressed: () {},
+                        ),
                       ],
                     ],
                   ),

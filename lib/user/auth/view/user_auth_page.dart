@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:ones_blog/app/cubit/menu_cubit.dart';
 import 'package:ones_blog/app/view/menu_view.dart';
 import 'package:ones_blog/app/widgets/app_button.dart';
 import 'package:ones_blog/app/widgets/fixed_app_bar.dart';
@@ -15,7 +14,7 @@ import 'package:ones_blog/user/auth/widgets/form_text_field.dart';
 import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/app_duration.dart';
 import 'package:ones_blog/utils/app_text_style.dart';
-import 'package:ones_blog/utils/constants/popped_from_page.dart';
+import 'package:ones_blog/utils/constants/popped_from_page_arguments.dart';
 import 'package:ones_blog/utils/constants/space_unit.dart';
 import 'package:ones_blog/utils/enums/bloc_cubit_status.dart';
 import 'package:ones_blog/utils/form_validator.dart';
@@ -29,19 +28,8 @@ class UserAuthPage extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) => MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (_) => MenuCubit(
-              userRepository: context.read<UserRepository>(),
-            ),
-          ),
-          BlocProvider(
-            create: (_) => UserAuthCubit(
-              userRepository: context.read<UserRepository>(),
-            ),
-          ),
-        ],
+  Widget build(BuildContext context) => BlocProvider<UserAuthCubit>.value(
+        value: UserAuthCubit(userRepository: context.read<UserRepository>()),
         child: const UserAuthView(),
       );
 }
@@ -78,21 +66,21 @@ class _UserAuthViewState extends State<UserAuthView> {
     _confirmPasswordController.clear();
   }
 
-  // A method that launches the UserVerifyCodePage,
-  // and awaits for Navigator.pop to reset register tab.
+  /// A method that launches the [UserVerifyCodePage],
+  /// and awaits for Navigator.pop to reset register tab.
   Future<void> _navigateUserVerifyCodePage(BuildContext context) async {
-    // Navigator.push returns a Future that completes after calling
-    // Navigator.pop on the UserVerifyCodePage Screen.
-    final fromPage = await Navigator.push(
+    /// Navigator.push returns a Future that completes after calling
+    /// Navigator.pop on the UserVerifyCodePage Screen.
+    final result = await Navigator.push(
       context,
       UserVerifyCodePage.route(_emailController.value.text),
     );
 
-    // When a BuildContext is used from a StatefulWidget, the mounted property
-    // must be checked after an asynchronous gap.
+    /// When a BuildContext is used from a StatefulWidget, the mounted property
+    /// must be checked after an asynchronous gap.
     if (!mounted) return;
 
-    if (fromPage == PoppedFromPage.userVerifyCode) {
+    if (result?.page == PoppedFromPage.userVerifyCode) {
       context.read<UserAuthCubit>().resetForm();
     }
   }

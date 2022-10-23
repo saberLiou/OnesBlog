@@ -60,6 +60,9 @@ class UserRepository {
     }
   }
 
+  /// Verify code for a registered user.
+  ///
+  /// Throws a [UserException] if an error occurs.
   Future<User> verifyCode({
     required String email,
     required String code,
