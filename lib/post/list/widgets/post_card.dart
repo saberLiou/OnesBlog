@@ -1,28 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:ones_blog/data/models/post.dart';
+import 'package:ones_blog/post/show/post_show.dart';
 import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/app_text_style.dart';
 
 class PostCard extends StatelessWidget {
   const PostCard({
     super.key,
-    required this.publishedAt,
-    required this.title,
+    required this.post,
     this.imageUrl,
   });
 
-  final String publishedAt;
-  final String title;
+  final Post post;
   final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () {},
+      onPressed: () => Navigator.push(
+        context,
+        PostShowPage.route(post),
+      ),
       child: Container(
         // margin: EdgeInsets.only(top: 10.0),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.muted,
-          borderRadius: new BorderRadius.all(
+          borderRadius: BorderRadius.all(
             Radius.circular(5.0),
           ),
         ),
@@ -37,14 +40,14 @@ class PostCard extends StatelessWidget {
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
-                      publishedAt,
+                      post.user!.name,
                       style: AppTextStyle.content,
                   ),
                 ),
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
-                      title,
+                      post.title,
                       style: AppTextStyle.content,
                     ),
                 ),

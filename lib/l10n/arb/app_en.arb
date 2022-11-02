@@ -1,10 +1,33 @@
 {
     "@@locale": "en",
     "appName": "OnesBlog",
+    "user": "User",
+    "userInformation": "User Information",
+    "location": "Location",
+    "locationInformation": "Location Information",
+    "switchToAccount": "Switch to {account}'s account",
+    "@switchToAccount": {
+        "placeholders": {
+            "account": {
+                "type": "String"
+            }
+        }
+    },
+    "switchingAccountMessage": "Switching...",
+    "switchAccountSuccessMessage": "Switch success!",
+    "switchAccountFailureMessage": "Switch failed.",
     "community": "Community",
     "restaurant": "Restaurant",
     "spot": "Spot",
     "lodging": "Lodging",
+    "categorySection": "{category} Section",
+    "@categorySection": {
+        "placeholders": {
+            "category": {
+                "type": "String"
+            }
+        }
+    },
     "more": "More {category}",
     "@more": {
         "placeholders": {
@@ -52,8 +75,8 @@
             }
         }
     },
-    "submit": "Submit",
     "cancel": "Cancel",
+    "submit": "Submit",
     "submittingMessage": "Submitting...",
     "submittedSuccessMessage": "Submit success!",
     "submittedFailureMessage": "Submitted failed, please try again.",
@@ -78,7 +101,9 @@
     "email": "Email",
     "username": "Username",
     "password": "Password",
+    "newPassword": "New password",
     "confirmPassword": "Confirm password",
+    "confirmNewPassword": "Confirm new password",
     "confirmPasswordPlaceholder": "Please confirm your password.",
     "forgetPasswordTitle": "Forget password?",
     "verifyCode": "Verify code",
@@ -92,8 +117,16 @@
         }
     },
     "resendVerifyCodeTitle": "Resend verify code",
+    "becomeLocation": "Manage a location",
     "addPost": "Add new post",
     "title": "Title",
     "content": "Content",
-    "emptyLocationMessage": "Please select a place."
+    "emptyLocationMessage": "Please select a place.",
+    "emptyCityAndAreaMessage": "Please select a city and its area.",
+    "becomeLocationSuccessMessage": "Submit success, please wait for the approval from OnesBlog administrator.",
+    "aboutUs": "About Us",
+    "leaderboard": "Leaderboard",
+    "locationPosts": "Location Posts",
+    "deletingMessage": "Deleting...",
+    "deletedSuccessMessage": "Delete success!"
 }

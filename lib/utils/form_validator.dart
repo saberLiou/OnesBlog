@@ -12,20 +12,24 @@ class FormValidator {
   final String? anotherValue;
   String? errorMessage;
 
-  void validateRequired() => errorMessage ??=
-      (value == null || value!.isEmpty) ? l10n.requiredErrorText : null;
+  bool _empty(String? value) => value == null || value.isEmpty;
 
-  void validateEmail() => errorMessage ??=
-      !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
-              .hasMatch(value!)
-          ? l10n.emailErrorText
+  void validateRequired() =>
+      errorMessage ??= _empty(value) ? l10n.requiredErrorText : null;
+
+  void validateEmail() => errorMessage ??= (!_empty(value) &&
+          !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+              .hasMatch(value!))
+      ? l10n.emailErrorText
+      : null;
+
+  void validateMin(int length) =>
+      errorMessage ??= (!_empty(value) && value!.length < length)
+          ? l10n.minErrorText(length)
           : null;
 
-  void validateMin(int length) => errorMessage ??=
-      (value!.length < length) ? l10n.minErrorText(length) : null;
-
-  void validateSame(String label, String comparedLabel) =>
-      errorMessage ??= (value! != anotherValue!)
+  void validateSame(String label, String comparedLabel) => errorMessage ??=
+      ((!_empty(value) || !_empty(anotherValue)) && value! != anotherValue!)
           ? l10n.sameErrorText(label, comparedLabel.toLowerCase())
           : null;
 }

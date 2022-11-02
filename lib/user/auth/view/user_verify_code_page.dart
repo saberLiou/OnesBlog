@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:ones_blog/app/cubit/menu_cubit.dart';
 import 'package:ones_blog/app/widgets/app_button.dart';
 import 'package:ones_blog/app/widgets/fixed_app_bar.dart';
 import 'package:ones_blog/domain/user_repository.dart';
@@ -19,7 +18,8 @@ import 'package:ones_blog/utils/size_handler.dart';
 class UserVerifyCodePage extends StatelessWidget {
   const UserVerifyCodePage({super.key});
 
-  static Route<PoppedFromPageArguments> route(String email) => MaterialPageRoute(
+  static Route<PoppedFromPageArguments> route(String email) =>
+      MaterialPageRoute(
         builder: (context) => BlocProvider(
           create: (context) => UserVerifyCodeCubit(
             userRepository: context.read<UserRepository>(),

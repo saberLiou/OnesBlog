@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:ones_blog/data/models/user.dart';
 import 'package:ones_blog/data/ones_blog_api_client.dart';
+import 'package:ones_blog/utils/enums/user_login_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Thrown when an error occurs while manipulating the user.
@@ -32,6 +34,29 @@ class UserRepository {
   Future<void> setToken(String? token) => token != null
       ? sharedPreferences.setString('token', token)
       : sharedPreferences.remove('token');
+
+  /// Get the user from [SharedPreferences].
+  User? getUser() {
+    final userJson = sharedPreferences.getString('user');
+    return (userJson != null)
+        ? User.fromJson(jsonDecode(userJson) as Map<String, dynamic>)
+        : null;
+  }
+
+  /// Set the user from [SharedPreferences],
+  /// or remove the user by passing null.
+  Future<void> setUser(User? user) => user != null
+      ? sharedPreferences.setString('user', jsonEncode(user.toJson()))
+      : sharedPreferences.remove('user');
+
+  /// Get the id of the user from [SharedPreferences].
+  // int? getUserId() => sharedPreferences.getInt('user_id');
+
+  /// Set the id of the user from [SharedPreferences],
+  /// or remove the id by passing null.
+  // Future<void> setUserId(int? userId) => userId != null
+  //     ? sharedPreferences.setInt('user_id', userId)
+  //     : sharedPreferences.remove('user_id');
 
   /// Register the user.
   ///
@@ -70,7 +95,7 @@ class UserRepository {
     try {
       return User.fromJson(
         await _onesBlogApiClient.store(
-          uri: 'verifyCode',
+          uri: 'verify-code',
           inputParams: {
             'email': email,
             'code': code,
@@ -104,7 +129,64 @@ class UserRepository {
       );
 
       await setToken(user.token);
+      await setUser(user);
 
+      return user;
+    } on Exception {
+      throw UserException();
+    }
+  }
+
+  /// Get and reset the user from [SharedPreferences].
+  ///
+  /// Throws a [UserException] if an error occurs.
+  Future<User?> getAuthUser() async {
+    try {
+      var localUser = getUser();
+      if (localUser != null) {
+        await setUser(
+          User.fromJson(
+            await _onesBlogApiClient.get(
+              uri: 'users/${localUser.id}',
+              token: getToken(),
+            ) as Map<String, dynamic>,
+          ),
+        );
+        localUser = getUser();
+      }
+      return localUser;
+    } on Exception {
+      throw UserException();
+    }
+  }
+
+  /// Update the user.
+  ///
+  /// Throws a [UserException] if an error occurs.
+  Future<User> update({
+    String? username,
+    String? password,
+    UserLoginType? loginType,
+  }) async {
+    try {
+      final user = User.fromJson(
+        await _onesBlogApiClient.update(
+          uri: 'users/${getUser()!.id}',
+          inputParams: {
+            if (username != null) ...{
+              'name': username,
+            },
+            if (password != null) ...{
+              'password': password,
+            },
+            if (loginType != null) ...{
+              'login_type_id': loginType.id.toString(),
+            }
+          },
+          token: getToken(),
+        ) as Map<String, dynamic>,
+      );
+      await setUser(user);
       return user;
     } on Exception {
       throw UserException();
@@ -131,6 +213,7 @@ class UserRepository {
       throw UserException();
     } finally {
       await setToken(null);
+      await setUser(null);
     }
   }
 

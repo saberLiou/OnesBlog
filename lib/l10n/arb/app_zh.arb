@@ -1,10 +1,33 @@
 {
     "@@locale": "zh",
     "appName": "玩食部落",
+    "user": "會員",
+    "userInformation": "個人資訊",
+    "location": "店家",
+    "locationInformation": "店家資訊",
+    "switchToAccount": "切換至{account}帳號",
+    "@switchToAccount": {
+        "placeholders": {
+            "account": {
+                "type": "String"
+            }
+        }
+    },
+    "switchingAccountMessage": "切換中...",
+    "switchAccountSuccessMessage": "切換成功！",
+    "switchAccountFailureMessage": "切換失敗。",
     "community": "社群",
     "restaurant": "餐廳",
     "spot": "景點",
     "lodging": "旅宿",
+    "categorySection": "{category}專區",
+    "@categorySection": {
+        "placeholders": {
+            "category": {
+                "type": "String"
+            }
+        }
+    },
     "more": "看更多{category}",
     "@more": {
         "placeholders": {
@@ -52,8 +75,8 @@
             }
         }
     },
-    "submit": "送出",
     "cancel": "取消",
+    "submit": "送出",
     "submittingMessage": "送出中...",
     "submittedSuccessMessage": "送出成功！",
     "submittedFailureMessage": "送出失敗，請重新嘗試。",
@@ -78,7 +101,9 @@
     "email": "電子信箱",
     "username": "用戶名稱",
     "password": "密碼",
+    "newPassword": "新密碼",
     "confirmPassword": "確認密碼",
+    "confirmNewPassword": "確認新密碼",
     "confirmPasswordPlaceholder": "請再次輸入您的密碼",
     "forgetPasswordTitle": "忘記密碼？",
     "verifyCode": "驗證碼",
@@ -92,8 +117,16 @@
         }
     },
     "resendVerifyCodeTitle": "重寄驗證信",
+    "becomeLocation": "成為店家",
     "addPost": "新增文章",
     "title": "標題",
     "content": "內文",
-    "emptyLocationMessage": "請選擇一個地點。"
+    "emptyLocationMessage": "請選擇一個地點。",
+    "emptyCityAndAreaMessage": "請選擇縣市與鄉鎮市區。",
+    "becomeLocationSuccessMessage": "您的申請已成功送出，請耐心等待系統管理員審核後通知您。",
+    "aboutUs": "關於我們",
+    "leaderboard": "排行榜",
+    "locationPosts": "分享文",
+    "deletingMessage": "刪除中...",
+    "deletedSuccessMessage": "刪除成功！"
 }

@@ -9,7 +9,18 @@ enum LocationCategory {
     required this.id,
   });
 
+  static final Map<int, LocationCategory> idTypes = {};
   final int id;
+
+  static LocationCategory getById(int? id) {
+    if (idTypes.isEmpty) {
+      for (final value in LocationCategory.values) {
+        idTypes[value.id] = value;
+      }
+    }
+
+    return idTypes[id] ?? LocationCategory.restaurants;
+  }
 
   String translate(AppLocalizations l10n) {
     switch (this) {

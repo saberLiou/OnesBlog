@@ -42,7 +42,9 @@ class OnesBlogApiClient {
     required String uri,
     Map<String, dynamic>? queryParams,
   }) async {
-    final response = await _get(Uri.https(_baseUrl, _prefix(uri), queryParams));
+    final response = await _get(
+      uri: Uri.https(_baseUrl, _prefix(uri), queryParams),
+    );
 
     try {
       return response.data as List;
@@ -51,21 +53,51 @@ class OnesBlogApiClient {
     }
   }
 
+  Future<dynamic> get({
+    required String uri,
+    String? token,
+  }) async =>
+      (await _get(
+        uri: Uri.https(_baseUrl, _prefix(uri)),
+        token: token,
+      ))
+          .data;
+
   Future<dynamic> store({
     required String uri,
     required Map<String, dynamic>? inputParams,
     String? token,
-  }) async {
-    final response = await _post(
-      Uri.https(_baseUrl, _prefix(uri)),
-      inputParams,
-      token,
-    );
+  }) async =>
+      (await _post(
+        Uri.https(_baseUrl, _prefix(uri)),
+        inputParams,
+        token,
+      ))
+          .data;
 
-    return response.data;
-  }
+  Future<dynamic> update({
+    required String uri,
+    required Map<String, dynamic>? inputParams,
+    String? token,
+  }) async =>
+      (await _put(
+        Uri.https(_baseUrl, _prefix(uri)),
+        inputParams,
+        token,
+      ))
+          .data;
 
-  Future<Response> _get(Uri uri) async {
+  Future<dynamic> delete({
+    required String uri,
+    String? token,
+  }) async =>
+      (await _delete(
+        Uri.https(_baseUrl, _prefix(uri)),
+        token,
+      ))
+          .data;
+
+  Future<Response> _get({required Uri uri, String? token}) async {
     http.Response response;
 
     try {
@@ -73,6 +105,9 @@ class OnesBlogApiClient {
         uri,
         headers: {
           HttpHeaders.acceptHeader: ContentType.json.toString(),
+          if (token != null) ...{
+            HttpHeaders.authorizationHeader: 'Bearer $token',
+          }
         },
       );
     } catch (_) {
@@ -109,6 +144,62 @@ class OnesBlogApiClient {
     }
 
     if (![200, 201].contains(response.statusCode)) {
+      throw HttpRequestFailure(response.statusCode);
+    }
+
+    return _decodeResponseBody(response.body);
+  }
+
+  Future<Response> _put(
+    Uri uri,
+    Map<String, dynamic>? body,
+    String? token,
+  ) async {
+    http.Response response;
+
+    try {
+      response = await _httpClient.put(
+        uri,
+        headers: {
+          HttpHeaders.acceptHeader: ContentType.json.toString(),
+          if (token != null) ...{
+            HttpHeaders.authorizationHeader: 'Bearer $token',
+          }
+        },
+        body: body,
+      );
+    } catch (_) {
+      throw HttpException();
+    }
+
+    if (response.statusCode != 200) {
+      throw HttpRequestFailure(response.statusCode);
+    }
+
+    return _decodeResponseBody(response.body);
+  }
+
+  Future<Response> _delete(
+    Uri uri,
+    String? token,
+  ) async {
+    http.Response response;
+
+    try {
+      response = await _httpClient.delete(
+        uri,
+        headers: {
+          HttpHeaders.acceptHeader: ContentType.json.toString(),
+          if (token != null) ...{
+            HttpHeaders.authorizationHeader: 'Bearer $token',
+          }
+        },
+      );
+    } catch (_) {
+      throw HttpException();
+    }
+
+    if (response.statusCode != 200) {
       throw HttpRequestFailure(response.statusCode);
     }
 

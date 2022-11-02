@@ -20,10 +20,14 @@ class PostRepository {
   /// Throws a [PostException] if an error occurs.
   Future<List<Post>> listPosts({
     required int categoryId,
+    int? locationId,
     int limit = 10,
   }) async {
     final queryParams = {
       'category_id': categoryId.toString(),
+      if (locationId != null) ...{
+        'location_id': locationId.toString(),
+      },
       'limit': limit.toString(),
     };
     try {
@@ -40,10 +44,11 @@ class PostRepository {
     }
   }
 
-  /// Verify code for a registered user.
+  /// Store a post.
   ///
   /// Throws a [PostException] if an error occurs.
   Future<Post> store({
+    required int? id,
     required String? token,
     required int locationId,
     required String title,
@@ -51,16 +56,44 @@ class PostRepository {
   }) async {
     try {
       return Post.fromJson(
-        await _onesBlogApiClient.store(
-          uri: _endpoint,
-          inputParams: {
-            'location_id': locationId.toString(),
-            'title': title,
-            'content': content,
-            'published_at': DateTime.now().toString(),
-          },
-          token: token,
-        ) as Map<String, dynamic>,
+        (id == null
+            ? await _onesBlogApiClient.store(
+                uri: _endpoint,
+                inputParams: {
+                  'location_id': locationId.toString(),
+                  'title': title,
+                  'content': content,
+                  'published_at': DateTime.now().toString(),
+                },
+                token: token,
+              )
+            : await _onesBlogApiClient.update(
+                uri: '$_endpoint/$id',
+                inputParams: {
+                  'location_id': locationId.toString(),
+                  'title': title,
+                  'content': content,
+                  'published_at': DateTime.now().toString(),
+                },
+                token: token,
+              )) as Map<String, dynamic>,
+      );
+    } on Exception {
+      throw PostException();
+    }
+  }
+
+  /// Delete a post.
+  ///
+  /// Throws a [PostException] if an error occurs.
+  Future<void> delete({
+    required int id,
+    required String? token,
+  }) async {
+    try {
+      await _onesBlogApiClient.delete(
+        uri: '$_endpoint/$id',
+        token: token,
       );
     } on Exception {
       throw PostException();

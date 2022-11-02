@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:ones_blog/domain/city_area_repository.dart';
+import 'package:ones_blog/domain/city_repository.dart';
 import 'package:ones_blog/domain/location_repository.dart';
+import 'package:ones_blog/domain/location_score_repository.dart';
 import 'package:ones_blog/domain/post_repository.dart';
 import 'package:ones_blog/domain/user_repository.dart';
 import 'package:ones_blog/home/home.dart';
@@ -20,19 +23,28 @@ class App extends StatelessWidget {
     super.key,
     required this.userRepository,
     required this.locationRepository,
+    required this.locationScoreRepository,
     required this.postRepository,
+    required this.cityRepository,
+    required this.cityAreaRepository,
   });
 
   final UserRepository userRepository;
   final LocationRepository locationRepository;
+  final LocationScoreRepository locationScoreRepository;
   final PostRepository postRepository;
+  final CityRepository cityRepository;
+  final CityAreaRepository cityAreaRepository;
 
   @override
   Widget build(BuildContext context) => MultiRepositoryProvider(
         providers: [
           RepositoryProvider.value(value: userRepository),
           RepositoryProvider.value(value: locationRepository),
+          RepositoryProvider.value(value: locationScoreRepository),
           RepositoryProvider.value(value: postRepository),
+          RepositoryProvider.value(value: cityRepository),
+          RepositoryProvider.value(value: cityAreaRepository),
         ],
         child: const AppView(),
       );

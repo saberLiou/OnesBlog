@@ -180,11 +180,13 @@ class _SearchResults extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return ListView.separated(
       itemCount: items.length,
-      itemBuilder: (BuildContext context, int index) => _SearchResultItem(
+      itemBuilder: (BuildContext context, int index) => items.isNotEmpty ? _SearchResultItem(
         item: items[index],
-      ),
+      ) : Center(child: Text(l10n.listFetchErrorMessage)),
       separatorBuilder: (BuildContext context, int index) => Container(
         margin: const EdgeInsets.symmetric(horizontal: SpaceUnit.base),
         height: SpaceUnit.quarterBase,
@@ -212,7 +214,7 @@ class _SearchResultItem extends StatelessWidget {
         PoppedFromPageArguments(
           page: PoppedFromPage.selectLocation,
           arguments: {
-            'locationId': 8, // TODO: change to real location id.
+            'locationId': item.id,
             'locationName': item.name,
           },
         ),

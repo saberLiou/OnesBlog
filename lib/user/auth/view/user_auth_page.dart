@@ -67,7 +67,7 @@ class _UserAuthViewState extends State<UserAuthView> {
   }
 
   /// A method that launches the [UserVerifyCodePage],
-  /// and awaits for Navigator.pop to reset register tab.
+  /// and awaits for Navigator.pop.
   Future<void> _navigateUserVerifyCodePage(BuildContext context) async {
     /// Navigator.push returns a Future that completes after calling
     /// Navigator.pop on the UserVerifyCodePage Screen.
@@ -255,20 +255,19 @@ class _UserAuthViewState extends State<UserAuthView> {
                           controller: _confirmPasswordController,
                           marginBottom: SpaceUnit.base,
                         ),
-                      if (state.loginTab)
-                        Container(
-                          margin: const EdgeInsets.only(
-                            right: SpaceUnit.base * 6,
-                          ),
-                          alignment: Alignment.centerRight,
-                          width: SizeHandler.screenWidth,
-                          child: GestureDetector(
-                            child: Text(l10n.forgetPasswordTitle),
-                            onTap: () {
-                              // TODO: 忘記密碼功能
-                            },
-                          ),
-                        ),
+                      // TODO: 忘記密碼功能
+                      // if (state.loginTab)
+                      //   Container(
+                      //     margin: const EdgeInsets.only(
+                      //       right: SpaceUnit.base * 6,
+                      //     ),
+                      //     alignment: Alignment.centerRight,
+                      //     width: SizeHandler.screenWidth,
+                      //     child: GestureDetector(
+                      //       child: Text(l10n.forgetPasswordTitle),
+                      //       onTap: () {},
+                      //     ),
+                      //   ),
                       Container(
                         margin: const EdgeInsets.only(
                           top: SpaceUnit.doubleBase,

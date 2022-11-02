@@ -7,9 +7,10 @@ import 'package:ones_blog/app/widgets/fixed_app_bar.dart';
 import 'package:ones_blog/domain/post_repository.dart';
 import 'package:ones_blog/domain/user_repository.dart';
 import 'package:ones_blog/l10n/l10n.dart';
-import 'package:ones_blog/post/create/post_create.dart';
 import 'package:ones_blog/post/list/post_list.dart';
 import 'package:ones_blog/post/list/widgets/post_card.dart';
+import 'package:ones_blog/post/store/post_store.dart';
+import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/app_duration.dart';
 import 'package:ones_blog/utils/app_text_style.dart';
 import 'package:ones_blog/utils/constants/popped_from_page_arguments.dart';
@@ -25,8 +26,8 @@ class PostListPage extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) => BlocProvider(
-        create: (context) => PostListCubit(
+  Widget build(BuildContext context) => BlocProvider<PostListCubit>.value(
+        value: PostListCubit(
           postRepository: context.read<PostRepository>(),
           userRepository: context.read<UserRepository>(),
         )..init(),
@@ -42,14 +43,14 @@ class PostListView extends StatefulWidget {
 }
 
 class _PostListViewState extends State<PostListView> {
-  /// A method that launches the [PostCreatePage],
-  /// and awaits for Navigator.pop to reset register tab.
-  Future<void> _navigatePostCreatePage(BuildContext context) async {
+  /// A method that launches the [PostStorePage],
+  /// and awaits for Navigator.pop.
+  Future<void> _navigatePostStorePage(BuildContext context) async {
     /// Navigator.push returns a Future that completes after calling
-    /// Navigator.pop on the PostCreatePage Screen.
+    /// Navigator.pop on the PostStorePage Screen.
     final result = await Navigator.push(
       context,
-      PostCreatePage.route(),
+      PostStorePage.route(null),
     );
 
     /// When a BuildContext is used from a StatefulWidget, the mounted property
@@ -117,26 +118,16 @@ class _PostListViewState extends State<PostListView> {
                               break;
                           }
                         },
-                        tabs: <Widget>[
-                          Tab(
-                            child: Text(
-                              l10n.restaurant,
-                              style: AppTextStyle.content,
-                            ),
-                          ),
-                          Tab(
-                            child: Text(
-                              l10n.spot,
-                              style: AppTextStyle.content,
-                            ),
-                          ),
-                          Tab(
-                            child: Text(
-                              l10n.lodging,
-                              style: AppTextStyle.content,
-                            ),
-                          ),
-                        ],
+                        tabs: LocationCategory.values
+                            .map(
+                              (category) => Tab(
+                                child: Text(
+                                  category.translate(l10n),
+                                  style: AppTextStyle.content,
+                                ),
+                              ),
+                            )
+                            .toList(),
                       ),
                     ],
                   ),
@@ -144,57 +135,31 @@ class _PostListViewState extends State<PostListView> {
               ),
             ],
             body: TabBarView(
-              children: <Widget>[
-                Center(
-                  child: SingleChildScrollView(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height + 350,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Color.fromRGBO(222, 215, 209, 1), width: 5),
-                        color: Color.fromRGBO(222, 215, 209, 1),
+              children: LocationCategory.values
+                  .map(
+                    (category) => SingleChildScrollView(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height + 350,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.primary,
+                            width: 5,
+                          ),
+                          color: AppColors.primary,
+                        ),
+                        child: _Content(),
                       ),
-                      child: _Content(),
                     ),
-                  ),
-                ),
-                Center(
-                  child: SingleChildScrollView(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height + 350,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Color.fromRGBO(222, 215, 209, 1), width: 5),
-                        color: Color.fromRGBO(222, 215, 209, 1),
-                      ),
-                      child: _Content(),
-                    ),
-                  ),
-                ),
-                Center(
-                  child: SingleChildScrollView(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height + 350,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Color.fromRGBO(222, 215, 209, 1), width: 5),
-                        color: Color.fromRGBO(222, 215, 209, 1),
-                      ),
-                      child: _Content(),
-                    ),
-                  ),
-                ),
-              ],
+                  )
+                  .toList(),
             ),
           ),
           floatingActionButton: FloatingActionButton(
             elevation: 4,
             onPressed: () => postListCubit.state.isLogin
-                ? _navigatePostCreatePage(context)
-                : EasyLoading.showError(
+                ? _navigatePostStorePage(context)
+                : EasyLoading.showInfo(
                     l10n.loginFirstTo(l10n.addPost.toLowerCase()),
                     duration: AppDuration.medium,
                   ),
@@ -248,10 +213,7 @@ class _PostListTiles extends StatelessWidget {
         builder: (context, state) => Column(
           children: [
             for (final post in state.posts!) ...[
-              PostCard(
-                publishedAt: post.publishedAt,
-                title: post.title,
-              ),
+              PostCard(post: post),
             ],
           ],
         ),

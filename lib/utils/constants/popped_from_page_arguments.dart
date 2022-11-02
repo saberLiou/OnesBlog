@@ -1,7 +1,9 @@
 enum PoppedFromPage {
   userVerifyCode,
+  showLocation,
   selectLocation,
-  addPost;
+  addPost,
+  updateUser;
 }
 
 class PoppedFromPageArguments {
