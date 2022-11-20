@@ -115,4 +115,24 @@ class LocationRepository {
       throw LocationException();
     }
   }
+
+  /// Returns a list of location likes of the user.
+  ///
+  /// Throws a [LocationException] if an error occurs.
+  Future<List<Location>> listLocationLikes(int userId) async {
+    try {
+      return (await _onesBlogApiClient.index(
+        uri: 'location-likes',
+        queryParams: {
+          'user_id': userId.toString(),
+        },
+      ))
+          .map(
+            (dynamic model) => Location.fromJson(model as Map<String, dynamic>),
+      )
+          .toList();
+    } on Exception {
+      throw LocationException();
+    }
+  }
 }

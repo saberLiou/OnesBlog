@@ -17,6 +17,7 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^8.0.1
   flutter_easyloading: ^3.0.5
+  flutter_launcher_icons: ^0.10.0
   flutter_localizations:
     sdk: flutter
   flutter_rating_bar: ^4.0.1
@@ -41,3 +42,13 @@ flutter:
     - images/element/
     - images/icon/
     - images/text/
+    - images/default/
+
+flutter_icons:
+  ios: true
+  android: true
+  image_path: "images/icon/icon.png"
+  image_path_ios: "images/icon/icon.png"
+  image_path_android: "images/icon/icon.png"
+  adaptive_icon_background: "images/icon/icon.png"
+  adaptive_icon_foreground: "images/icon/icon.png"

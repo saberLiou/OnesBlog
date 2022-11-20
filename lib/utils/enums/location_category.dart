@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:ones_blog/l10n/l10n.dart';
 
 enum LocationCategory {
@@ -30,6 +31,26 @@ enum LocationCategory {
         return l10n.spot;
       case LocationCategory.lodgings:
         return l10n.lodging;
+    }
+  }
+
+  Image defaultImage() {
+    switch (this) {
+      case LocationCategory.restaurants:
+        return Image.asset(
+          'images/default/restaurants.jpeg',
+          fit: BoxFit.fill,
+        );
+      case LocationCategory.spots:
+        return Image.asset(
+          'images/default/spots.jpeg',
+          fit: BoxFit.fill,
+        );
+      case LocationCategory.lodgings:
+        return Image.asset(
+          'images/default/lodgings.jpeg',
+          fit: BoxFit.fill,
+        );
     }
   }
 }

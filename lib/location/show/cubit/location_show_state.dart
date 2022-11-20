@@ -8,6 +8,7 @@ class LocationShowState extends Equatable {
     this.fromMenu = false,
     required this.location,
     this.posts,
+    this.authUserLiked = false,
     this.score = 0,
     this.submittingRate = false,
   });
@@ -18,6 +19,7 @@ class LocationShowState extends Equatable {
   final bool fromMenu;
   final Location location;
   final List<Post>? posts;
+  final bool authUserLiked;
   final double score;
   final bool submittingRate;
 
@@ -28,6 +30,7 @@ class LocationShowState extends Equatable {
     bool? fromMenu,
     Location? location,
     List<Post>? posts,
+    bool? authUserLiked,
     double? score,
     bool? submittingRate,
   }) =>
@@ -38,6 +41,7 @@ class LocationShowState extends Equatable {
         fromMenu: fromMenu ?? this.fromMenu,
         location: location ?? this.location,
         posts: posts ?? this.posts,
+        authUserLiked: authUserLiked ?? this.authUserLiked,
         score: score ?? this.score,
         submittingRate: submittingRate ?? this.submittingRate,
       );
@@ -50,6 +54,7 @@ class LocationShowState extends Equatable {
         fromMenu,
         location,
         posts,
+        authUserLiked,
         score,
         submittingRate,
       ];

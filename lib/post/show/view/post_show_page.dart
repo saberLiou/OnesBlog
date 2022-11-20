@@ -6,6 +6,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:ones_blog/app/view/menu_view.dart';
 import 'package:ones_blog/app/widgets/fixed_app_bar.dart';
 import 'package:ones_blog/data/models/post.dart';
+import 'package:ones_blog/domain/post_keep_repository.dart';
 import 'package:ones_blog/domain/post_repository.dart';
 import 'package:ones_blog/domain/user_repository.dart';
 import 'package:ones_blog/l10n/l10n.dart';
@@ -28,6 +29,7 @@ class PostShowPage extends StatelessWidget {
           value: PostShowCubit(
             userRepository: context.read<UserRepository>(),
             postRepository: context.read<PostRepository>(),
+            postKeepRepository: context.read<PostKeepRepository>(),
             post: post,
           )..init(),
           child: const PostShowPage(),
@@ -44,6 +46,7 @@ class PostShowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final postShowCubit = context.read<PostShowCubit>();
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -61,18 +64,22 @@ class PostShowView extends StatelessWidget {
                   case BlocCubitStatus.initial:
                     break;
                   case BlocCubitStatus.loading:
-                    EasyLoading.show(status: l10n.deletingMessage);
+                    if (state.deleting) {
+                      EasyLoading.show(status: l10n.deletingMessage);
+                    }
                     break;
                   case BlocCubitStatus.success:
                   case BlocCubitStatus.failure:
-                    EasyLoading.showSuccess(
-                      l10n.deletedSuccessMessage,
-                      duration: AppDuration.short,
-                    );
-                    Navigator.pushReplacement(
-                      context,
-                      PostListPage.route(),
-                    );
+                    if (state.deleting) {
+                      EasyLoading.showSuccess(
+                        l10n.deletedSuccessMessage,
+                        duration: AppDuration.short,
+                      );
+                      Navigator.pushReplacement(
+                        context,
+                        PostListPage.route(),
+                      );
+                    }
                     break;
                 }
               },
@@ -93,7 +100,8 @@ class PostShowView extends StatelessWidget {
                                   backgroundColor: Colors.white,
                                   child: ClipOval(
                                     child: Image.asset(
-                                        'images/element/member.png'),
+                                      'images/element/member.png',
+                                    ),
                                   ),
                                 ),
                                 Column(
@@ -118,16 +126,20 @@ class PostShowView extends StatelessWidget {
                                   ],
                                 ),
                                 if (!state.isAuthor)
-                                  IconButton(
-                                    onPressed: () {
-                                      // TODO: 文章收藏功能
-                                    },
-                                    icon: const Icon(
-                                      Icons.bookmark_border,
-                                      size: 40,
-                                      color: Colors.black,
-                                    ),
-                                  )
+                                  if (state.isLogin)
+                                    IconButton(
+                                      isSelected: false,
+                                      onPressed: postShowCubit.keep,
+                                      icon: Icon(
+                                        postShowCubit.state.authUserKept
+                                            ? Icons.bookmark
+                                            : Icons.bookmark_border,
+                                        size: 40,
+                                        color: Colors.black,
+                                      ),
+                                    )
+                                  else
+                                    Container()
                                 else
                                   Row(
                                     children: [

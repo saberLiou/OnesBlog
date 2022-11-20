@@ -3,6 +3,7 @@ import 'package:ones_blog/data/models/post.dart';
 import 'package:ones_blog/post/show/post_show.dart';
 import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/app_text_style.dart';
+import 'package:ones_blog/utils/enums/location_category.dart';
 
 class PostCard extends StatelessWidget {
   const PostCard({
@@ -38,27 +39,27 @@ class PostCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      post.user!.name,
-                      style: AppTextStyle.content,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    post.user!.name,
+                    style: AppTextStyle.content,
                   ),
                 ),
                 Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      post.title,
-                      style: AppTextStyle.content,
-                    ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    post.title,
+                    style: AppTextStyle.content,
+                  ),
                 ),
               ],
             ),
-            Spacer(),
+            const Spacer(),
             ClipRRect(
               borderRadius: BorderRadius.circular(5),
-              child: Image(
-                image: AssetImage(imageUrl ?? 'images/element/test.jpeg'),
-              ),
+              child: LocationCategory.getById(
+                post.location?.categoryId,
+              ).defaultImage(),
             ),
           ],
         ),

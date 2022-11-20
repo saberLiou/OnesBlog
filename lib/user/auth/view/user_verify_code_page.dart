@@ -134,17 +134,16 @@ class _UserVerifyCodeViewState extends State<UserVerifyCodeView> {
                               }
                             },
                           ),
-                          Container(
-                            margin: const EdgeInsets.only(
-                              top: SpaceUnit.doubleBase,
-                            ),
-                            child: GestureDetector(
-                              child: Text(l10n.resendVerifyCodeTitle),
-                              onTap: () {
-                                // TODO: 重寄驗證信功能
-                              },
-                            ),
-                          ),
+                          // TODO: 重寄驗證信功能
+                          // Container(
+                          //   margin: const EdgeInsets.only(
+                          //     top: SpaceUnit.doubleBase,
+                          //   ),
+                          //   child: GestureDetector(
+                          //     child: Text(l10n.resendVerifyCodeTitle),
+                          //     onTap: () {},
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),

@@ -139,10 +139,7 @@ class _LocationsCarouselSliderViewState
                                       Radius.circular(SpaceUnit.doubleBase),
                                 ),
                               ),
-                              child: Image.network(
-                                'https://picsum.photos/seed/picsum/1024/768',
-                                fit: BoxFit.fill,
-                              ),
+                              child: state.category.defaultImage(),
                             ),
                             Expanded(
                               child: Container(
@@ -179,7 +176,7 @@ class _LocationsCarouselSliderViewState
                                         color: Colors.amber,
                                       ),
                                       Text(
-                                        location.avgScore.toString(),
+                                        location.avgScore.toStringAsFixed(2),
                                         style: AppTextStyle.content,
                                       ),
                                     ],

@@ -80,7 +80,7 @@ class LocationCard extends StatelessWidget {
                         color: Colors.amber,
                       ),
                       Text(
-                        location.avgScore.toString(),
+                        location.avgScore.toStringAsFixed(2),
                         style: AppTextStyle.content,
                       ),
                     ],

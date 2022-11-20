@@ -11,8 +11,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:ones_blog/domain/city_area_repository.dart';
 import 'package:ones_blog/domain/city_repository.dart';
+import 'package:ones_blog/domain/location_like_repository.dart';
 import 'package:ones_blog/domain/location_repository.dart';
 import 'package:ones_blog/domain/location_score_repository.dart';
+import 'package:ones_blog/domain/post_keep_repository.dart';
 import 'package:ones_blog/domain/post_repository.dart';
 import 'package:ones_blog/domain/user_repository.dart';
 import 'package:ones_blog/home/home.dart';
@@ -24,7 +26,9 @@ class App extends StatelessWidget {
     required this.userRepository,
     required this.locationRepository,
     required this.locationScoreRepository,
+    required this.locationLikeRepository,
     required this.postRepository,
+    required this.postKeepRepository,
     required this.cityRepository,
     required this.cityAreaRepository,
   });
@@ -32,7 +36,9 @@ class App extends StatelessWidget {
   final UserRepository userRepository;
   final LocationRepository locationRepository;
   final LocationScoreRepository locationScoreRepository;
+  final LocationLikeRepository locationLikeRepository;
   final PostRepository postRepository;
+  final PostKeepRepository postKeepRepository;
   final CityRepository cityRepository;
   final CityAreaRepository cityAreaRepository;
 
@@ -42,7 +48,9 @@ class App extends StatelessWidget {
           RepositoryProvider.value(value: userRepository),
           RepositoryProvider.value(value: locationRepository),
           RepositoryProvider.value(value: locationScoreRepository),
+          RepositoryProvider.value(value: locationLikeRepository),
           RepositoryProvider.value(value: postRepository),
+          RepositoryProvider.value(value: postKeepRepository),
           RepositoryProvider.value(value: cityRepository),
           RepositoryProvider.value(value: cityAreaRepository),
         ],

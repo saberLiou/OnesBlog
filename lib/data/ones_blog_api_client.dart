@@ -32,7 +32,7 @@ class OnesBlogApiClient {
   OnesBlogApiClient({http.Client? httpClient})
       : _httpClient = httpClient ?? http.Client();
 
-  static const _baseUrl = 'onesblog.herokuapp.com';
+  static const _baseUrl = 'ones-blog.tw';
   static const _endpointPrefix = '/api/';
   final http.Client _httpClient;
 

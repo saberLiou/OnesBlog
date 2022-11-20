@@ -3,9 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ones_blog/app/view/menu_view.dart';
 import 'package:ones_blog/app/widgets/app_button.dart';
 import 'package:ones_blog/app/widgets/fixed_app_bar.dart';
+import 'package:ones_blog/data/models/location.dart';
+import 'package:ones_blog/data/models/location_score.dart';
+import 'package:ones_blog/data/models/post.dart';
 import 'package:ones_blog/data/models/user.dart';
+import 'package:ones_blog/domain/location_repository.dart';
+import 'package:ones_blog/domain/location_score_repository.dart';
+import 'package:ones_blog/domain/post_repository.dart';
 import 'package:ones_blog/domain/user_repository.dart';
 import 'package:ones_blog/l10n/l10n.dart';
+import 'package:ones_blog/post/list/widgets/post_card.dart';
 import 'package:ones_blog/user/show/cubit/user_show_cubit.dart';
 import 'package:ones_blog/user/update/user_update.dart';
 import 'package:ones_blog/utils/app_colors.dart';
@@ -21,8 +28,11 @@ class UserShowPage extends StatelessWidget {
         builder: (context) => BlocProvider<UserShowCubit>.value(
           value: UserShowCubit(
             userRepository: context.read<UserRepository>(),
+            locationRepository: context.read<LocationRepository>(),
+            locationScoreRepository: context.read<LocationScoreRepository>(),
+            postRepository: context.read<PostRepository>(),
             user: user,
-          ),
+          )..init(),
           child: const UserShowPage(),
         ),
       );
@@ -101,39 +111,33 @@ class _UserShowViewState extends State<UserShowView> {
                               ],
                             ),
                             Column(
-                              children: const [
-                                Text(
+                              children: [
+                                const Text(
                                   '我的文章',
                                   style: TextStyle(fontSize: 12),
                                 ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text('2'),
+                                const SizedBox(height: 5),
+                                Text((state.posts?.length).toString()),
                               ],
                             ),
                             Column(
-                              children: const [
-                                Text(
+                              children: [
+                                const Text(
                                   '喜好店家',
                                   style: TextStyle(fontSize: 12),
                                 ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text('9'),
+                                const SizedBox(height: 5),
+                                Text((state.likedLocations?.length).toString()),
                               ],
                             ),
                             Column(
-                              children: const [
-                                Text(
+                              children: [
+                                const Text(
                                   '珍藏文章',
                                   style: TextStyle(fontSize: 12),
                                 ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text('9'),
+                                const SizedBox(height: 5),
+                                Text((state.keptPosts?.length).toString()),
                               ],
                             ),
                           ],
@@ -207,44 +211,83 @@ class _UserShowViewState extends State<UserShowView> {
             ],
             body: TabBarView(
               children: <Widget>[
-                Container(
-                  color: AppColors.primary,
-                  height: SizeHandler.screenHeight + 600,
-                  width: SizeHandler.screenWidth,
-                  child: Column(
-                    children: const [
-                      Text('data'),
-                    ],
+                SingleChildScrollView(
+                  child: Container(
+                    color: AppColors.primary,
+                    height: SizeHandler.screenHeight + 600,
+                    width: SizeHandler.screenWidth,
+                    child: BlocBuilder<UserShowCubit, UserShowState>(
+                      builder: (context, state) => Column(
+                        children: [
+                          for (final post in state.posts ?? <Post>[]) ...[
+                            PostCard(post: post),
+                          ],
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                Container(
-                  color: AppColors.primary,
-                  height: SizeHandler.screenHeight + 600,
-                  width: SizeHandler.screenWidth,
-                  child: Column(
-                    children: const [
-                      Text('data'),
-                    ],
+                // ),
+                SingleChildScrollView(
+                  child: Container(
+                    color: AppColors.primary,
+                    height: SizeHandler.screenHeight + 600,
+                    width: SizeHandler.screenWidth,
+                    child: BlocBuilder<UserShowCubit, UserShowState>(
+                      builder: (context, state) => Column(
+                        children: [
+                          for (final location
+                              in state.likedLocations ?? <Location>[]) ...[
+                            ListTile(
+                              title: Text(
+                                location.name,
+                                style: AppTextStyle.content,
+                              ),
+                              subtitle: Text(location.cityAndArea ?? ''),
+                            ),
+                          ]
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                Container(
-                  color: AppColors.primary,
-                  height: SizeHandler.screenHeight + 600,
-                  width: SizeHandler.screenWidth,
-                  child: Column(
-                    children: const [
-                      Text('data'),
-                    ],
+                SingleChildScrollView(
+                  child: Container(
+                    color: AppColors.primary,
+                    height: SizeHandler.screenHeight + 600,
+                    width: SizeHandler.screenWidth,
+                    child: BlocBuilder<UserShowCubit, UserShowState>(
+                      builder: (context, state) => Column(
+                        children: [
+                          for (final post in state.keptPosts ?? <Post>[]) ...[
+                            PostCard(post: post),
+                          ],
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                Container(
-                  color: AppColors.primary,
-                  height: SizeHandler.screenHeight + 600,
-                  width: SizeHandler.screenWidth,
-                  child: Column(
-                    children: const [
-                      Text('data'),
-                    ],
+                SingleChildScrollView(
+                  child: Container(
+                    color: AppColors.primary,
+                    height: SizeHandler.screenHeight + 600,
+                    width: SizeHandler.screenWidth,
+                    child: BlocBuilder<UserShowCubit, UserShowState>(
+                      builder: (context, state) => Column(
+                        children: [
+                          for (final score
+                              in state.locationScores ?? <LocationScore>[]) ...[
+                            ListTile(
+                              title: Text(
+                                score.location.name,
+                                style: AppTextStyle.content,
+                              ),
+                              subtitle: Text(score.score.toString()),
+                            ),
+                          ]
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],

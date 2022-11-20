@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:ones_blog/data/models/location.dart';
 import 'package:ones_blog/data/models/location_score.dart';
 import 'package:ones_blog/data/models/post.dart';
+import 'package:ones_blog/domain/location_like_repository.dart';
 import 'package:ones_blog/domain/location_repository.dart';
 import 'package:ones_blog/domain/location_score_repository.dart';
 import 'package:ones_blog/domain/post_repository.dart';
@@ -18,12 +20,14 @@ class LocationShowCubit extends Cubit<LocationShowState> {
     required this.postRepository,
     required bool fromMenu,
     required this.locationScoreRepository,
+    required this.locationLikeRepository,
     required this.locationRepository,
   }) : super(LocationShowState(location: location, fromMenu: fromMenu));
 
   final UserRepository userRepository;
   final PostRepository postRepository;
   final LocationScoreRepository locationScoreRepository;
+  final LocationLikeRepository locationLikeRepository;
   final LocationRepository locationRepository;
 
   Future<void> init() async {
@@ -35,13 +39,23 @@ class LocationShowCubit extends Cubit<LocationShowState> {
       ),
     );
     try {
-      final locationScores = isLogin ? await locationScoreRepository.listLocationScores(
-        locationId: state.location.id,
-        userId: userRepository.getUser()!.id,
-      ) : <LocationScore>[];
+      final locationScores = isLogin
+          ? await locationScoreRepository.listLocationScores(
+              locationId: state.location.id,
+              userId: userRepository.getUser()!.id,
+            )
+          : <LocationScore>[];
+      final likedLocation = (isLogin
+              ? await locationRepository
+                  .listLocationLikes(userRepository.getUser()!.id)
+              : <Location>[])
+          .firstWhereOrNull(
+        (location) => location.id == state.location.id,
+      );
       emit(
         state.copyWith(
           initStatus: BlocCubitStatus.success,
+          authUserLiked: likedLocation != null,
           score: locationScores.isNotEmpty ? locationScores.first.score : 0,
         ),
       );
@@ -51,6 +65,25 @@ class LocationShowCubit extends Cubit<LocationShowState> {
   }
 
   void setRate(double score) => emit(state.copyWith(score: score));
+
+  Future<void> like() async {
+    emit(state.copyWith(status: BlocCubitStatus.loading));
+
+    try {
+      await locationLikeRepository.store(
+        locationId: state.location.id,
+        token: userRepository.getToken(),
+      );
+      emit(
+        state.copyWith(
+          initStatus: BlocCubitStatus.success,
+          authUserLiked: !state.authUserLiked,
+        ),
+      );
+    } on Exception {
+      emit(state.copyWith(initStatus: BlocCubitStatus.failure));
+    }
+  }
 
   Future<void> rate() async {
     emit(state.copyWith(status: BlocCubitStatus.loading, submittingRate: true));

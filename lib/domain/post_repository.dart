@@ -19,14 +19,20 @@ class PostRepository {
   ///
   /// Throws a [PostException] if an error occurs.
   Future<List<Post>> listPosts({
-    required int categoryId,
+    int? categoryId,
     int? locationId,
+    int? userId,
     int limit = 10,
   }) async {
     final queryParams = {
-      'category_id': categoryId.toString(),
+      if (categoryId != null) ... {
+        'category_id': categoryId.toString(),
+      },
       if (locationId != null) ...{
         'location_id': locationId.toString(),
+      },
+      if (userId != null) ...{
+        'user_id': userId.toString(),
       },
       'limit': limit.toString(),
     };
@@ -95,6 +101,26 @@ class PostRepository {
         uri: '$_endpoint/$id',
         token: token,
       );
+    } on Exception {
+      throw PostException();
+    }
+  }
+
+  /// Returns a list of post keeps of the user.
+  ///
+  /// Throws a [PostException] if an error occurs.
+  Future<List<Post>> listPostKeeps(int userId) async {
+    try {
+      return (await _onesBlogApiClient.index(
+        uri: 'post-keeps',
+        queryParams: {
+          'user_id': userId.toString(),
+        },
+      ))
+          .map(
+            (dynamic model) => Post.fromJson(model as Map<String, dynamic>),
+          )
+          .toList();
     } on Exception {
       throw PostException();
     }

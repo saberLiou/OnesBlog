@@ -11,8 +11,10 @@ import 'package:ones_blog/bootstrap.dart';
 import 'package:ones_blog/data/ones_blog_api_client.dart';
 import 'package:ones_blog/domain/city_area_repository.dart';
 import 'package:ones_blog/domain/city_repository.dart';
+import 'package:ones_blog/domain/location_like_repository.dart';
 import 'package:ones_blog/domain/location_repository.dart';
 import 'package:ones_blog/domain/location_score_repository.dart';
+import 'package:ones_blog/domain/post_keep_repository.dart';
 import 'package:ones_blog/domain/post_repository.dart';
 import 'package:ones_blog/domain/user_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +32,13 @@ Future<void> main() async {
   final locationScoreRepository = LocationScoreRepository(
     onesBlogApiClient: onesBlogApiClient,
   );
+  final locationLikeRepository = LocationLikeRepository(
+    onesBlogApiClient: onesBlogApiClient,
+  );
   final postRepository = PostRepository(onesBlogApiClient: onesBlogApiClient);
+  final postKeepRepository = PostKeepRepository(
+    onesBlogApiClient: onesBlogApiClient,
+  );
   final cityRepository = CityRepository(onesBlogApiClient: onesBlogApiClient);
   final cityAreaRepository = CityAreaRepository(
     onesBlogApiClient: onesBlogApiClient,
@@ -41,7 +49,9 @@ Future<void> main() async {
       userRepository: userRepository,
       locationRepository: locationRepository,
       locationScoreRepository: locationScoreRepository,
+      locationLikeRepository: locationLikeRepository,
       postRepository: postRepository,
+      postKeepRepository: postKeepRepository,
       cityRepository: cityRepository,
       cityAreaRepository: cityAreaRepository,
     ),

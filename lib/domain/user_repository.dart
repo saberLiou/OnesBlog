@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:ones_blog/data/models/location.dart';
 import 'package:ones_blog/data/models/user.dart';
 import 'package:ones_blog/data/ones_blog_api_client.dart';
 import 'package:ones_blog/utils/enums/user_login_type.dart';
@@ -48,15 +49,6 @@ class UserRepository {
   Future<void> setUser(User? user) => user != null
       ? sharedPreferences.setString('user', jsonEncode(user.toJson()))
       : sharedPreferences.remove('user');
-
-  /// Get the id of the user from [SharedPreferences].
-  // int? getUserId() => sharedPreferences.getInt('user_id');
-
-  /// Set the id of the user from [SharedPreferences],
-  /// or remove the id by passing null.
-  // Future<void> setUserId(int? userId) => userId != null
-  //     ? sharedPreferences.setInt('user_id', userId)
-  //     : sharedPreferences.remove('user_id');
 
   /// Register the user.
   ///

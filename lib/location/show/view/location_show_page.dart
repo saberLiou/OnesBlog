@@ -5,6 +5,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:ones_blog/app/view/menu_view.dart';
 import 'package:ones_blog/app/widgets/fixed_app_bar.dart';
 import 'package:ones_blog/data/models/location.dart';
+import 'package:ones_blog/domain/location_like_repository.dart';
 import 'package:ones_blog/domain/location_repository.dart';
 import 'package:ones_blog/domain/location_score_repository.dart';
 import 'package:ones_blog/domain/post_repository.dart';
@@ -13,13 +14,13 @@ import 'package:ones_blog/l10n/l10n.dart';
 import 'package:ones_blog/location/show/location_show.dart';
 import 'package:ones_blog/location/store/location_store.dart';
 import 'package:ones_blog/location/store/view/location_store_page.dart';
-import 'package:ones_blog/location/widgets/location_images_carousel_slider.dart';
 import 'package:ones_blog/post/list/widgets/post_card.dart';
 import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/app_text_style.dart';
 import 'package:ones_blog/utils/constants/popped_from_page_arguments.dart';
 import 'package:ones_blog/utils/constants/space_unit.dart';
 import 'package:ones_blog/utils/enums/bloc_cubit_status.dart';
+import 'package:ones_blog/utils/enums/location_category.dart';
 import 'package:ones_blog/utils/size_handler.dart';
 
 class LocationShowPage extends StatelessWidget {
@@ -37,6 +38,7 @@ class LocationShowPage extends StatelessWidget {
             postRepository: context.read<PostRepository>(),
             fromMenu: fromMenu,
             locationScoreRepository: context.read<LocationScoreRepository>(),
+            locationLikeRepository: context.read<LocationLikeRepository>(),
             locationRepository: context.read<LocationRepository>(),
           )..init(),
           child: const LocationShowPage(),
@@ -67,15 +69,17 @@ class LocationShowView extends StatelessWidget {
                 case BlocCubitStatus.initial:
                   break;
                 case BlocCubitStatus.loading:
-                  if (state.submittingRate) {
-                    EasyLoading.show(
-                      status: l10n.submittingMessage,
-                    );
-                  }
+                  // if (state.submittingRate) {
+                  //   EasyLoading.show(
+                  //     status: l10n.submittingMessage
+                  //   );
+                  // }
                   break;
                 case BlocCubitStatus.success:
                 case BlocCubitStatus.failure:
-                  EasyLoading.dismiss();
+                  // if (state.submittingRate) {
+                  //   EasyLoading.dismiss();
+                  // }
                   break;
               }
             },
@@ -102,13 +106,18 @@ class LocationShowView extends StatelessWidget {
                               ),
                             ),
                             if (!state.fromMenu)
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.favorite_border,
-                                  size: 40,
-                                ),
-                              )
+                              if (state.isLogin)
+                                IconButton(
+                                  onPressed: locationShowCubit.like,
+                                  icon: Icon(
+                                    locationShowCubit.state.authUserLiked
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    size: 40,
+                                  ),
+                                )
+                              else
+                                Container()
                             else
                               IconButton(
                                 onPressed: () => Navigator.push(
@@ -162,7 +171,12 @@ class LocationShowView extends StatelessWidget {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          // LocationImagesCarouselSlider(categoryId: 1),
+                          // TODO: 多圖輪播
+                          Container(
+                            child: LocationCategory.getById(
+                              state.location.categoryId,
+                            ).defaultImage(),
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -182,7 +196,7 @@ class LocationShowView extends StatelessWidget {
                                 ignoreGestures: true,
                                 onRatingUpdate: print,
                               ),
-                              Text(state.location.avgScore.toString()),
+                              Text(state.location.avgScore.toStringAsFixed(2)),
                               if (state.isLogin && !state.fromMenu)
                                 Container(
                                   width: 48,
