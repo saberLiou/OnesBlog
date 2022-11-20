@@ -69,17 +69,15 @@ class LocationShowView extends StatelessWidget {
                 case BlocCubitStatus.initial:
                   break;
                 case BlocCubitStatus.loading:
-                  // if (state.submittingRate) {
-                  //   EasyLoading.show(
-                  //     status: l10n.submittingMessage
-                  //   );
-                  // }
+                  if (state.submittingRate) {
+                    EasyLoading.show(
+                      status: l10n.submittingMessage,
+                    );
+                  }
                   break;
                 case BlocCubitStatus.success:
                 case BlocCubitStatus.failure:
-                  // if (state.submittingRate) {
-                  //   EasyLoading.dismiss();
-                  // }
+                  EasyLoading.dismiss();
                   break;
               }
             },
