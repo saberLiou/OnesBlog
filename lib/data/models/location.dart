@@ -19,6 +19,7 @@ class Location extends Equatable {
     required this.phone,
     required this.avgScore,
     required this.introduction,
+    required this.images,
   });
 
   /// Creates a Location from Json map
@@ -55,6 +56,9 @@ class Location extends Equatable {
   /// A description for introduction
   final String? introduction;
 
+  /// A description for images
+  final List<String>? images;
+
   /// Creates a copy of the current Location with property changes
   Location copyWith({
     int? id,
@@ -67,6 +71,7 @@ class Location extends Equatable {
     String? phone,
     double? avgScore,
     String? introduction,
+    List<String>? images,
   }) {
     return Location(
       id: id ?? this.id,
@@ -79,6 +84,7 @@ class Location extends Equatable {
       phone: phone ?? this.phone,
       avgScore: avgScore ?? this.avgScore,
       introduction: introduction ?? this.introduction,
+      images: images ?? this.images,
     );
   }
 
@@ -94,6 +100,7 @@ class Location extends Equatable {
         phone,
         avgScore,
         introduction,
+        images,
       ];
 
   /// Creates a Json map from a Location

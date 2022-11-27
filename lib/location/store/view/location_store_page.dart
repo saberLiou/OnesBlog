@@ -2,10 +2,11 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ones_blog/app/view/menu_view.dart';
 import 'package:ones_blog/app/widgets/app_button.dart';
 import 'package:ones_blog/app/widgets/fixed_app_bar.dart';
+import 'package:ones_blog/app/widgets/images_picker.dart';
 import 'package:ones_blog/data/models/location.dart';
 import 'package:ones_blog/domain/city_area_repository.dart';
 import 'package:ones_blog/domain/city_repository.dart';
@@ -16,6 +17,7 @@ import 'package:ones_blog/l10n/l10n.dart';
 import 'package:ones_blog/location/show/location_show.dart';
 import 'package:ones_blog/location/store/location_store.dart';
 import 'package:ones_blog/location/widgets/location_category_select.dart';
+import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/app_duration.dart';
 import 'package:ones_blog/utils/app_text_style.dart';
 import 'package:ones_blog/utils/constants/space_unit.dart';
@@ -65,6 +67,8 @@ class _LocationStoreViewState extends State<LocationStoreView> {
   TimeOfDay? startTime = const TimeOfDay(hour: 0, minute: 0);
   TimeOfDay? endTime = const TimeOfDay(hour: 0, minute: 0);
 
+  final List<XFile>? imageFileList = [];
+
   @override
   void initState() {
     super.initState();
@@ -98,18 +102,6 @@ class _LocationStoreViewState extends State<LocationStoreView> {
     SizeHandler.init(context);
     final l10n = context.l10n;
     final locationCreateCubit = context.read<LocationStoreCubit>();
-
-    Color getColor(Set<MaterialState> states) {
-      const Set<MaterialState> interactiveStates = <MaterialState>{
-        MaterialState.pressed,
-        MaterialState.hovered,
-        MaterialState.focused,
-      };
-      if (states.any(interactiveStates.contains)) {
-        return Colors.blue;
-      }
-      return Color.fromRGBO(198, 201, 203, 1);
-    }
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -161,19 +153,21 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                 child: Column(
                   children: [
                     Container(
-                      color: Color.fromRGBO(222, 215, 209, 1),
-                      height: MediaQuery.of(context).size.height + 600,
-                      width: MediaQuery.of(context).size.width,
+                      color: AppColors.primary,
+                      height: SizeHandler.screenHeight + 600,
+                      width: SizeHandler.screenWidth,
                       child: Column(
                         children: [
                           Container(
-                            margin: const EdgeInsets.only(top: 20),
+                            margin: const EdgeInsets.only(
+                              top: SpaceUnit.doubleBase,
+                            ),
                             width: 300,
                             height: 1200,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: Colors.white,
-                              borderRadius: new BorderRadius.all(
-                                Radius.circular(10.0),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(SpaceUnit.base),
                               ),
                             ),
                             child: Column(
@@ -520,26 +514,9 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                     ),
                                   ),
                                 ),
-                                Spacer(),
-                                Container(
-                                  width: 280,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color:
-                                              Color.fromRGBO(185, 153, 98, 1.0),
-                                          width: 2.0)),
-                                  child: TextButton(
-                                    onPressed: () {},
-                                    child: Icon(
-                                      FontAwesomeIcons.photoFilm,
-                                      color: Color.fromRGBO(198, 201, 203, 1.0),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                )
+                                const Spacer(),
+                                // TODO: preview location images.
+                                ImagesPicker(imageFileList: imageFileList),
                               ],
                             ),
                           ),

@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -169,12 +170,26 @@ class LocationShowView extends StatelessWidget {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          // TODO: 多圖輪播
-                          Container(
-                            child: LocationCategory.getById(
-                              state.location.categoryId,
-                            ).defaultImage(),
-                          ),
+                          // TODO: 店家資訊頁的多圖輪播
+                          if (state.fromMenu)
+                            Container(
+                              child: LocationCategory.getById(
+                                state.location.categoryId,
+                              ).defaultImage(),
+                            )
+                          else
+                            CarouselSlider(
+                              options: CarouselOptions(
+                                autoPlay: true,
+                                enlargeCenterPage: true,
+                              ),
+                              items: [
+                                for (final image
+                                    in state.location.images ?? <String>[]) ...[
+                                  Image.network(image, fit: BoxFit.fill)
+                                ],
+                              ],
+                            ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [

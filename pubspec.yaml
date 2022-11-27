@@ -23,6 +23,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   font_awesome_flutter: ^10.2.1
   http: ^0.13.5
+  image_picker: ^0.8.6
   intl: ^0.17.0
   shared_preferences: ^2.0.15
   stream_transform: ^2.0.1

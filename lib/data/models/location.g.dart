@@ -13,6 +13,9 @@ Location _$LocationFromJson(Map<String, dynamic> json) => Location(
       phone: json['phone'] as String,
       avgScore: double.parse(json['avgScore'].toString()),
       introduction: json['introduction'] as String?,
+      images: (json['images'] as List)
+          .map((dynamic model) => model as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
@@ -26,4 +29,5 @@ Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
       'phone': instance.phone,
       'avgScore': instance.avgScore,
       'introduction': instance.introduction,
+      'images': instance.images,
     };

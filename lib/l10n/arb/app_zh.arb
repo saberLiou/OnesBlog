@@ -128,5 +128,8 @@
     "leaderboard": "排行榜",
     "locationPosts": "分享文",
     "deletingMessage": "刪除中...",
-    "deletedSuccessMessage": "刪除成功！"
+    "deletedSuccessMessage": "刪除成功！",
+    "uploadImagesTitle": "上傳照片",
+    "fromGallery": "從相簿選擇",
+    "fromCamera": "相機拍攝"
 }

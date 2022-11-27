@@ -128,5 +128,8 @@
     "leaderboard": "Leaderboard",
     "locationPosts": "Location Posts",
     "deletingMessage": "Deleting...",
-    "deletedSuccessMessage": "Delete success!"
+    "deletedSuccessMessage": "Delete success!",
+    "uploadImagesTitle": "Upload images",
+    "fromGallery": "From gallery",
+    "fromCamera": "From camera"
 }

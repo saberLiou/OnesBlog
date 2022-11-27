@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ones_blog/data/models/location.dart';
@@ -127,7 +128,6 @@ class _LocationsCarouselSliderViewState
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // TODO: real images
                             Container(
                               height: SpaceUnit.base * 20,
                               width: double.infinity,
@@ -139,7 +139,12 @@ class _LocationsCarouselSliderViewState
                                       Radius.circular(SpaceUnit.doubleBase),
                                 ),
                               ),
-                              child: state.category.defaultImage(),
+                              child: location.images?.firstOrNull != null
+                                  ? Image.network(
+                                      location.images!.first,
+                                      fit: BoxFit.fill,
+                                    )
+                                  : state.category.defaultImage(),
                             ),
                             Expanded(
                               child: Container(
