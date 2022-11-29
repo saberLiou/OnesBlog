@@ -29,7 +29,9 @@ class UserAuthPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocProvider<UserAuthCubit>.value(
-        value: UserAuthCubit(userRepository: context.read<UserRepository>()),
+        value: UserAuthCubit(
+          userRepository: context.read<UserRepository>(),
+        )..init(),
         child: const UserAuthView(),
       );
 }
@@ -43,11 +45,22 @@ class UserAuthView extends StatefulWidget {
 
 class _UserAuthViewState extends State<UserAuthView> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  late final TextEditingController _emailController,
+      _usernameController,
+      _passwordController,
+      _confirmPasswordController;
+
+  @override
+  void initState() {
+    super.initState();
+    final state = context.read<UserAuthCubit>().state;
+    _emailController = TextEditingController(
+      text: !state.loginTab ? state.unverifiedEmail : null,
+    );
+    _usernameController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
+  }
 
   @override
   void dispose() {
@@ -56,14 +69,6 @@ class _UserAuthViewState extends State<UserAuthView> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
-  }
-
-  void _resetForm() {
-    _formKey.currentState!.reset();
-    _emailController.clear();
-    _usernameController.clear();
-    _passwordController.clear();
-    _confirmPasswordController.clear();
   }
 
   /// A method that launches the [UserVerifyCodePage],
@@ -81,7 +86,7 @@ class _UserAuthViewState extends State<UserAuthView> {
     if (!mounted) return;
 
     if (result?.page == PoppedFromPage.userVerifyCode) {
-      context.read<UserAuthCubit>().resetForm();
+      await context.read<UserAuthCubit>().resetForm();
     }
   }
 
@@ -108,7 +113,15 @@ class _UserAuthViewState extends State<UserAuthView> {
                 listener: (context, state) {
                   switch (state.status) {
                     case BlocCubitStatus.initial:
-                      _resetForm();
+                      _formKey.currentState!.reset();
+                      _usernameController.clear();
+                      _passwordController.clear();
+                      _confirmPasswordController.clear();
+                      if (!state.loginTab && state.emailUnverified) {
+                        _emailController.text = state.unverifiedEmail!;
+                      } else {
+                        _emailController.clear();
+                      }
                       break;
                     case BlocCubitStatus.loading:
                       EasyLoading.show(
@@ -171,7 +184,9 @@ class _UserAuthViewState extends State<UserAuthView> {
                                 : Colors.white,
                             onPressed: () =>
                                 userAuthCubit.setTab(loginTab: false),
-                            text: l10n.register,
+                            text: state.emailUnverified
+                                ? l10n.verify
+                                : l10n.register,
                           ),
                         ],
                       ),
@@ -199,6 +214,7 @@ class _UserAuthViewState extends State<UserAuthView> {
                         label: l10n.email,
                         placeholder: l10n.placeholder(l10n.email.toLowerCase()),
                         keyboardType: TextInputType.emailAddress,
+                        readOnly: !state.loginTab && state.emailUnverified,
                         validator: (String? value) => (FormValidator(
                           l10n: l10n,
                           value: value,
@@ -208,7 +224,7 @@ class _UserAuthViewState extends State<UserAuthView> {
                             .errorMessage,
                         controller: _emailController,
                       ),
-                      if (!state.loginTab)
+                      if (!state.loginTab && !state.emailUnverified)
                         FormTextField(
                           label: l10n.username,
                           placeholder:
@@ -220,22 +236,24 @@ class _UserAuthViewState extends State<UserAuthView> {
                               .errorMessage,
                           controller: _usernameController,
                         ),
-                      FormTextField(
-                        label: l10n.password,
-                        placeholder:
-                            l10n.placeholder(l10n.password.toLowerCase()),
-                        obscureText: true,
-                        validator: (String? value) => (FormValidator(
-                          l10n: l10n,
-                          value: value,
-                        )
-                              ..validateRequired()
-                              ..validateMin(6))
-                            .errorMessage,
-                        controller: _passwordController,
-                        marginBottom: SpaceUnit.base * (state.loginTab ? 1 : 5),
-                      ),
-                      if (!state.loginTab)
+                      if (state.loginTab || !state.emailUnverified)
+                        FormTextField(
+                          label: l10n.password,
+                          placeholder:
+                              l10n.placeholder(l10n.password.toLowerCase()),
+                          obscureText: true,
+                          validator: (String? value) => (FormValidator(
+                            l10n: l10n,
+                            value: value,
+                          )
+                                ..validateRequired()
+                                ..validateMin(6))
+                              .errorMessage,
+                          controller: _passwordController,
+                          marginBottom:
+                              SpaceUnit.base * (state.loginTab ? 1 : 5),
+                        ),
+                      if (!state.loginTab && !state.emailUnverified)
                         FormTextField(
                           label: l10n.confirmPassword,
                           placeholder: l10n.confirmPasswordPlaceholder,
@@ -278,22 +296,35 @@ class _UserAuthViewState extends State<UserAuthView> {
                             AppButton(
                               height: SpaceUnit.base * 7,
                               width: SpaceUnit.base * 11,
-                              title: l10n.cancel,
-                              onPressed: userAuthCubit.resetForm,
+                              title: (!state.loginTab && state.emailUnverified)
+                                  ? l10n.registerAgain
+                                  : l10n.cancel,
+                              onPressed: () => userAuthCubit.resetForm(
+                                registerAgain:
+                                    !state.loginTab && state.emailUnverified,
+                              ),
                             ),
                             AppButton(
                               height: SpaceUnit.base * 7,
                               width: SpaceUnit.base * 11,
-                              title:
-                                  state.loginTab ? l10n.login : l10n.register,
+                              title: state.loginTab
+                                  ? l10n.login
+                                  : state.emailUnverified
+                                      ? l10n.verifyEmail
+                                      : l10n.register,
                               onPressed: () {
                                 FocusScope.of(context).unfocus();
-                                if (_formKey.currentState!.validate()) {
-                                  userAuthCubit.submit(
-                                    email: _emailController.value.text,
-                                    username: _usernameController.value.text,
-                                    password: _passwordController.value.text,
-                                  );
+                                if (userAuthCubit.state.loginTab ||
+                                    !userAuthCubit.state.emailUnverified) {
+                                  if (_formKey.currentState!.validate()) {
+                                    userAuthCubit.submit(
+                                      email: _emailController.value.text,
+                                      username: _usernameController.value.text,
+                                      password: _passwordController.value.text,
+                                    );
+                                  }
+                                } else {
+                                  _navigateUserVerifyCodePage(context);
                                 }
                               },
                             ),

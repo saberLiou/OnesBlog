@@ -12,6 +12,13 @@ class UserAuthCubit extends Cubit<UserAuthState> {
 
   final UserRepository userRepository;
 
+  void init() => emit(
+        state.copyWith(
+          status: BlocCubitStatus.initial,
+          unverifiedEmail: userRepository.getEmail(),
+        ),
+      );
+
   void setTab({required bool loginTab}) => emit(
         state.copyWith(
           status: BlocCubitStatus.initial,
@@ -19,7 +26,19 @@ class UserAuthCubit extends Cubit<UserAuthState> {
         ),
       );
 
-  void resetForm() => emit(state.copyWith(status: BlocCubitStatus.initial));
+  Future<void> resetForm({bool registerAgain = false}) async {
+    if (registerAgain) {
+      await userRepository.setEmail(null);
+      emit(
+        state.copyWith(
+          status: BlocCubitStatus.initial,
+          unverifiedEmail: userRepository.getEmail(),
+        ),
+      );
+    } else {
+      emit(state.copyWith(status: BlocCubitStatus.initial));
+    }
+  }
 
   Future<void> submit({
     required String email,
@@ -42,7 +61,12 @@ class UserAuthCubit extends Cubit<UserAuthState> {
         );
       }
 
-      emit(state.copyWith(status: BlocCubitStatus.success));
+      emit(
+        state.copyWith(
+          status: BlocCubitStatus.success,
+          unverifiedEmail: userRepository.getEmail(),
+        ),
+      );
     } on Exception {
       emit(state.copyWith(status: BlocCubitStatus.failure));
     }

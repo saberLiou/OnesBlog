@@ -10,6 +10,7 @@ class FormTextField extends StatelessWidget {
     required this.validator,
     this.controller,
     this.keyboardType = TextInputType.text,
+    this.readOnly = false,
     this.obscureText = false,
     this.marginBottom = SpaceUnit.base * 5,
   });
@@ -19,53 +20,55 @@ class FormTextField extends StatelessWidget {
   final String? Function(String?) validator;
   final TextEditingController? controller;
   final TextInputType keyboardType;
+  final bool readOnly;
   final bool obscureText;
   final double marginBottom;
 
   @override
   Widget build(BuildContext context) => Container(
-    margin: EdgeInsets.only(
-      top: SpaceUnit.base,
-      bottom: marginBottom,
-    ),
-    width: SpaceUnit.quadrupleBase * 10,
-    child: TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      obscureText: obscureText,
-      validator: validator,
-      decoration: InputDecoration(
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        label: Container(
-          padding: const EdgeInsets.only(
-            bottom: SpaceUnit.quadrupleBase * 2,
-          ),
-          child: RichText(
-            text: TextSpan(
-              style: AppTextStyle.title,
-              children: [
-                const TextSpan(
-                  text: '*',
-                  style: TextStyle(
-                    fontSize: SpaceUnit.base * 3.5,
-                    color: Colors.red,
-                  ),
+        margin: EdgeInsets.only(
+          top: SpaceUnit.base,
+          bottom: marginBottom,
+        ),
+        width: SpaceUnit.quadrupleBase * 10,
+        child: TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          readOnly: readOnly,
+          obscureText: obscureText,
+          validator: validator,
+          decoration: InputDecoration(
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            label: Container(
+              padding: const EdgeInsets.only(
+                bottom: SpaceUnit.quadrupleBase * 2,
+              ),
+              child: RichText(
+                text: TextSpan(
+                  style: AppTextStyle.title,
+                  children: [
+                    const TextSpan(
+                      text: '*',
+                      style: TextStyle(
+                        fontSize: SpaceUnit.base * 3.5,
+                        color: Colors.red,
+                      ),
+                    ),
+                    TextSpan(text: label),
+                  ],
                 ),
-                TextSpan(text: label),
-              ],
+              ),
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            hintText: placeholder,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                SpaceUnit.base * 2.5,
+              ),
+              borderSide: BorderSide.none,
             ),
           ),
         ),
-        filled: true,
-        fillColor: Colors.white,
-        hintText: placeholder,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            SpaceUnit.base * 2.5,
-          ),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    ),
-  );
+      );
 }

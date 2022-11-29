@@ -36,6 +36,15 @@ class UserRepository {
       ? sharedPreferences.setString('token', token)
       : sharedPreferences.remove('token');
 
+  /// Get the email of the user from [SharedPreferences].
+  String? getEmail() => sharedPreferences.getString('email');
+
+  /// Set the email of the user from [SharedPreferences],
+  /// or remove the email by passing null.
+  Future<void> setEmail(String? email) => email != null
+      ? sharedPreferences.setString('email', email)
+      : sharedPreferences.remove('email');
+
   /// Get the user from [SharedPreferences].
   User? getUser() {
     final userJson = sharedPreferences.getString('user');
@@ -61,7 +70,7 @@ class UserRepository {
     try {
       final deviceName = await _getDeviceName();
 
-      return User.fromJson(
+      final user = User.fromJson(
         await _onesBlogApiClient.store(
           uri: 'register',
           inputParams: {
@@ -72,6 +81,10 @@ class UserRepository {
           },
         ) as Map<String, dynamic>,
       );
+
+      await setEmail(user.email);
+
+      return user;
     } on Exception {
       throw UserException();
     }
@@ -85,7 +98,7 @@ class UserRepository {
     required String code,
   }) async {
     try {
-      return User.fromJson(
+      final user = User.fromJson(
         await _onesBlogApiClient.store(
           uri: 'verify-code',
           inputParams: {
@@ -94,6 +107,10 @@ class UserRepository {
           },
         ) as Map<String, dynamic>,
       );
+
+      await setEmail(null);
+
+      return user;
     } on Exception {
       throw UserException();
     }
