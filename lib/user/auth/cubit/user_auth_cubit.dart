@@ -8,16 +8,9 @@ part 'user_auth_state.dart';
 class UserAuthCubit extends Cubit<UserAuthState> {
   UserAuthCubit({
     required this.userRepository,
-  }) : super(const UserAuthState());
+  }) : super(UserAuthState(unverifiedEmail: userRepository.getEmail()));
 
   final UserRepository userRepository;
-
-  void init() => emit(
-        state.copyWith(
-          status: BlocCubitStatus.initial,
-          unverifiedEmail: userRepository.getEmail(),
-        ),
-      );
 
   void setTab({required bool loginTab}) => emit(
         state.copyWith(
@@ -28,7 +21,7 @@ class UserAuthCubit extends Cubit<UserAuthState> {
 
   Future<void> resetForm({bool registerAgain = false}) async {
     if (registerAgain) {
-      await userRepository.setEmail(null);
+      await userRepository.setEmail('');
       emit(
         state.copyWith(
           status: BlocCubitStatus.initial,
@@ -36,7 +29,13 @@ class UserAuthCubit extends Cubit<UserAuthState> {
         ),
       );
     } else {
-      emit(state.copyWith(status: BlocCubitStatus.initial));
+      emit(
+        state.copyWith(
+          status: BlocCubitStatus.initial,
+          resettingForm: true,
+        ),
+      );
+      emit(state.copyWith(resettingForm: false));
     }
   }
 

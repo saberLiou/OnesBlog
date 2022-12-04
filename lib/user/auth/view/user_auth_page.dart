@@ -31,7 +31,7 @@ class UserAuthPage extends StatelessWidget {
   Widget build(BuildContext context) => BlocProvider<UserAuthCubit>.value(
         value: UserAuthCubit(
           userRepository: context.read<UserRepository>(),
-        )..init(),
+        ),
         child: const UserAuthView(),
       );
 }
@@ -53,10 +53,7 @@ class _UserAuthViewState extends State<UserAuthView> {
   @override
   void initState() {
     super.initState();
-    final state = context.read<UserAuthCubit>().state;
-    _emailController = TextEditingController(
-      text: !state.loginTab ? state.unverifiedEmail : null,
-    );
+    _emailController = TextEditingController();
     _usernameController = TextEditingController();
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
@@ -110,6 +107,8 @@ class _UserAuthViewState extends State<UserAuthView> {
               width: SizeHandler.screenWidth,
               height: SizeHandler.screenHeight * 1.2,
               child: BlocConsumer<UserAuthCubit, UserAuthState>(
+                listenWhen: (previousState, state) =>
+                    !previousState.resettingForm,
                 listener: (context, state) {
                   switch (state.status) {
                     case BlocCubitStatus.initial:
@@ -118,7 +117,7 @@ class _UserAuthViewState extends State<UserAuthView> {
                       _passwordController.clear();
                       _confirmPasswordController.clear();
                       if (!state.loginTab && state.emailUnverified) {
-                        _emailController.text = state.unverifiedEmail!;
+                        _emailController.text = state.unverifiedEmail;
                       } else {
                         _emailController.clear();
                       }

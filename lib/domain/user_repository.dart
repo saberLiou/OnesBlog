@@ -37,11 +37,11 @@ class UserRepository {
       : sharedPreferences.remove('token');
 
   /// Get the email of the user from [SharedPreferences].
-  String? getEmail() => sharedPreferences.getString('email');
+  String getEmail() => sharedPreferences.getString('email') ?? '';
 
   /// Set the email of the user from [SharedPreferences],
-  /// or remove the email by passing null.
-  Future<void> setEmail(String? email) => email != null
+  /// or remove the email by passing empty string.
+  Future<void> setEmail(String email) => email != ''
       ? sharedPreferences.setString('email', email)
       : sharedPreferences.remove('email');
 
@@ -108,7 +108,7 @@ class UserRepository {
         ) as Map<String, dynamic>,
       );
 
-      await setEmail(null);
+      await setEmail('');
 
       return user;
     } on Exception {
