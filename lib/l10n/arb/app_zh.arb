@@ -119,7 +119,21 @@
             }
         }
     },
-    "resendVerifyCodeTitle": "重寄驗證信",
+    "toResendVerificationCodeTitle": "{minutes}:{seconds}後可重寄驗證信",
+    "@toResendVerificationCodeTitle": {
+        "placeholders": {
+            "minutes": {
+                "type": "String"
+            },
+            "seconds": {
+                "type": "String"
+            }
+        }
+    },
+    "resendVerificationCodeTitle": "重寄驗證信",
+    "resendingMessage": "寄送中...",
+    "resentSuccessMessage": "驗證信已寄送至您的信箱，請再次查收。",
+    "resentFailureMessage": "寄送失敗。",
     "becomeLocation": "成為店家",
     "addPost": "新增文章",
     "title": "標題",

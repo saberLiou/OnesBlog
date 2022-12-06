@@ -9,6 +9,7 @@ import 'package:ones_blog/user/auth/user_auth.dart';
 import 'package:ones_blog/user/auth/widgets/form_text_field.dart';
 import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/app_duration.dart';
+import 'package:ones_blog/utils/app_text_style.dart';
 import 'package:ones_blog/utils/constants/popped_from_page_arguments.dart';
 import 'package:ones_blog/utils/constants/space_unit.dart';
 import 'package:ones_blog/utils/enums/bloc_cubit_status.dart';
@@ -40,13 +41,34 @@ class UserVerifyCodeView extends StatefulWidget {
   State createState() => _UserVerifyCodeViewState();
 }
 
-class _UserVerifyCodeViewState extends State<UserVerifyCodeView> {
+class _UserVerifyCodeViewState extends State<UserVerifyCodeView>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _codeController = TextEditingController();
+  late final TextEditingController _codeController;
+  late final AnimationController _countdownController;
+  late final Animation<int> _countdownAnimation;
+  static const int countdownSeconds = 30;
+
+  Future<void> _executeAfterBuild() async => _countdownController.forward();
+
+  @override
+  void initState() {
+    super.initState();
+    _codeController = TextEditingController();
+    _countdownController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: countdownSeconds),
+    );
+    _countdownAnimation = StepTween(
+      begin: countdownSeconds,
+      end: 0,
+    ).animate(_countdownController);
+  }
 
   @override
   void dispose() {
-    _codeController.clear();
+    _codeController.dispose();
+    _countdownController.dispose();
     super.dispose();
   }
 
@@ -55,6 +77,7 @@ class _UserVerifyCodeViewState extends State<UserVerifyCodeView> {
     SizeHandler.init(context);
     final l10n = context.l10n;
     final userVerifyCodeCubit = context.read<UserVerifyCodeCubit>();
+    _executeAfterBuild();
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -98,24 +121,38 @@ class _UserVerifyCodeViewState extends State<UserVerifyCodeView> {
                             break;
                           case BlocCubitStatus.loading:
                             EasyLoading.show(
-                              status: l10n.submittingMessage,
+                              status: state.verifyingCode
+                                  ? l10n.submittingMessage
+                                  : l10n.resendingMessage,
                             );
                             break;
                           case BlocCubitStatus.success:
                             EasyLoading.showSuccess(
-                              l10n.verifiedMessage(l10n.appName),
+                              state.verifyingCode
+                                  ? l10n.verifiedMessage(l10n.appName)
+                                  : l10n.resentSuccessMessage,
                               duration: AppDuration.medium,
                             );
-                            Navigator.pushReplacement(
-                              context,
-                              UserAuthPage.route(),
-                            );
+                            if (state.verifyingCode) {
+                              Navigator.pushReplacement(
+                                context,
+                                UserAuthPage.route(),
+                              );
+                            } else {
+                              _codeController.clear();
+                              _countdownController
+                                ..reset()
+                                ..forward();
+                            }
                             break;
                           case BlocCubitStatus.failure:
                             EasyLoading.showError(
-                              l10n.unverifiedMessage,
+                              state.verifyingCode
+                                  ? l10n.unverifiedMessage
+                                  : l10n.resentFailureMessage,
                               duration: AppDuration.short,
                             );
+                            _codeController.clear();
                             break;
                         }
                       },
@@ -134,16 +171,20 @@ class _UserVerifyCodeViewState extends State<UserVerifyCodeView> {
                               }
                             },
                           ),
-                          // TODO: 重寄驗證信功能
-                          // Container(
-                          //   margin: const EdgeInsets.only(
-                          //     top: SpaceUnit.doubleBase,
-                          //   ),
-                          //   child: GestureDetector(
-                          //     child: Text(l10n.resendVerifyCodeTitle),
-                          //     onTap: () {},
-                          //   ),
-                          // ),
+                          Container(
+                            margin: const EdgeInsets.only(
+                              top: SpaceUnit.doubleBase,
+                            ),
+                            alignment: Alignment.center,
+                            child: Countdown(
+                              animation: _countdownAnimation,
+                              animatingTitle:
+                                  l10n.toResendVerificationCodeTitle,
+                              animatedTitle: l10n.resendVerificationCodeTitle,
+                              onAnimatedTap:
+                                  userVerifyCodeCubit.resendVerificationCode,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -154,6 +195,44 @@ class _UserVerifyCodeViewState extends State<UserVerifyCodeView> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class Countdown extends AnimatedWidget {
+  const Countdown({
+    super.key,
+    required this.animation,
+    required this.animatingTitle,
+    required this.animatedTitle,
+    required this.onAnimatedTap,
+  }) : super(listenable: animation);
+
+  final Animation<int> animation;
+  final String Function(String minutes, String seconds) animatingTitle;
+  final String animatedTitle;
+  final GestureTapCallback onAnimatedTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final clockTimer = Duration(seconds: animation.value),
+        minutes = clockTimer.inMinutes.remainder(60).toString(),
+        seconds = clockTimer.inSeconds.remainder(60).toString().padLeft(2, '0');
+
+    return InkWell(
+      child: Builder(
+        builder: (context) => Text(
+          animation.value > 0
+              ? animatingTitle(minutes, seconds)
+              : animatedTitle,
+          style: AppTextStyle.content,
+        ),
+      ),
+      onTap: () {
+        if (animation.value == 0) {
+          onAnimatedTap();
+        }
+      },
     );
   }
 }

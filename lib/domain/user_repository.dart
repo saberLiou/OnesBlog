@@ -90,6 +90,24 @@ class UserRepository {
     }
   }
 
+  /// Resend verification code for a registered user.
+  ///
+  /// Throws a [UserException] if an error occurs.
+  Future<void> resendVerificationCode({
+    required String email,
+  }) async {
+    try {
+      await _onesBlogApiClient.store(
+        uri: 'resend-verification-code',
+        inputParams: {
+          'email': email,
+        },
+      );
+    } on Exception {
+      throw UserException();
+    }
+  }
+
   /// Verify code for a registered user.
   ///
   /// Throws a [UserException] if an error occurs.

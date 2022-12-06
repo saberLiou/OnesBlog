@@ -119,7 +119,21 @@
             }
         }
     },
-    "resendVerifyCodeTitle": "Resend verify code",
+    "toResendVerificationCodeTitle": "After {minutes}:{seconds}, and you may resend verification code",
+    "@toResendVerificationCodeTitle": {
+        "placeholders": {
+            "minutes": {
+                "type": "String"
+            },
+            "seconds": {
+                "type": "String"
+            }
+        }
+    },
+    "resendVerificationCodeTitle": "Resend verification code",
+    "resendingMessage": "Resending...",
+    "resentSuccessMessage": "Resent success, please head for your mailbox to receive the verification letter again.",
+    "resentFailureMessage": "Resent failed.",
     "becomeLocation": "Manage a location",
     "addPost": "Add new post",
     "title": "Title",
