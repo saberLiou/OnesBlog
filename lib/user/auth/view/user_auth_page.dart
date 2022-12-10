@@ -8,6 +8,7 @@ import 'package:ones_blog/domain/user_repository.dart';
 import 'package:ones_blog/home/home.dart';
 import 'package:ones_blog/l10n/l10n.dart';
 import 'package:ones_blog/user/auth/cubit/user_auth_cubit.dart';
+import 'package:ones_blog/user/auth/view/user_forget_password_page.dart';
 import 'package:ones_blog/user/auth/view/user_verify_code_page.dart';
 import 'package:ones_blog/user/auth/widgets/form_tab.dart';
 import 'package:ones_blog/user/auth/widgets/form_text_field.dart';
@@ -75,7 +76,10 @@ class _UserAuthViewState extends State<UserAuthView> {
     /// Navigator.pop on the UserVerifyCodePage Screen.
     final result = await Navigator.push(
       context,
-      UserVerifyCodePage.route(_emailController.value.text),
+      UserVerifyCodePage.route(
+        registerFlow: true,
+        email: _emailController.value.text,
+      ),
     );
 
     /// When a BuildContext is used from a StatefulWidget, the mounted property
@@ -123,15 +127,13 @@ class _UserAuthViewState extends State<UserAuthView> {
                       }
                       break;
                     case BlocCubitStatus.loading:
-                      EasyLoading.show(
-                        status: l10n.submittingMessage,
-                      );
+                      EasyLoading.show(status: l10n.submittingMessage);
                       break;
                     case BlocCubitStatus.success:
                       EasyLoading.showSuccess(
                         state.loginTab
                             ? l10n.loginSuccessMessage
-                            : l10n.registerSuccessMessage,
+                            : l10n.emailSentSuccessMessage(l10n.register),
                         duration: state.loginTab
                             ? AppDuration.short
                             : AppDuration.long,
@@ -272,19 +274,21 @@ class _UserAuthViewState extends State<UserAuthView> {
                           controller: _confirmPasswordController,
                           marginBottom: SpaceUnit.base,
                         ),
-                      // TODO: 忘記密碼功能
-                      // if (state.loginTab)
-                      //   Container(
-                      //     margin: const EdgeInsets.only(
-                      //       right: SpaceUnit.base * 6,
-                      //     ),
-                      //     alignment: Alignment.centerRight,
-                      //     width: SizeHandler.screenWidth,
-                      //     child: GestureDetector(
-                      //       child: Text(l10n.forgetPasswordTitle),
-                      //       onTap: () {},
-                      //     ),
-                      //   ),
+                      if (state.loginTab)
+                        Container(
+                          margin: const EdgeInsets.only(
+                            right: SpaceUnit.base * 5,
+                          ),
+                          alignment: Alignment.centerRight,
+                          width: SizeHandler.screenWidth,
+                          child: GestureDetector(
+                            child: Text(l10n.forgetPasswordTitle),
+                            onTap: () => Navigator.push(
+                              context,
+                              UserForgetPasswordPage.route(),
+                            ),
+                          ),
+                        ),
                       Container(
                         margin: const EdgeInsets.only(
                           top: SpaceUnit.doubleBase,

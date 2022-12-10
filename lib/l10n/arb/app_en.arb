@@ -94,7 +94,14 @@
     },
     "registerPageTitle": "Create an account.",
     "register": "Register",
-    "registerSuccessMessage": "Register success, please head for your mailbox to receive the verification letter.",
+    "emailSentSuccessMessage": "{action} success, please head for your mailbox to receive the verification letter.",
+    "@emailSentSuccessMessage": {
+        "placeholders": {
+            "action": {
+                "type": "String"
+            }
+        }
+    },
     "logout": "Logout",
     "loggingOutMessage": "Logging out...",
     "logoutSuccessMessage": "Logout success!",
@@ -106,6 +113,8 @@
     "confirmNewPassword": "Confirm new password",
     "confirmPasswordPlaceholder": "Please confirm your password.",
     "forgetPasswordTitle": "Forget password?",
+    "codeCheckedSuccessMessage": "Email had been verified, please reset your password.",
+    "resetPasswordSuccessMessage": "Password had been reset, please login again.",
     "verify": "Verify",
     "registerAgain": "Register again",
     "verifyEmail": "Verify email",

@@ -8,15 +8,19 @@ part 'user_verify_code_state.dart';
 class UserVerifyCodeCubit extends Cubit<UserVerifyCodeState> {
   UserVerifyCodeCubit({
     required this.userRepository,
+    required bool registerFlow,
     required String email,
-  }) : super(UserVerifyCodeState(email: email));
+  }) : super(UserVerifyCodeState(registerFlow: registerFlow, email: email));
 
   final UserRepository userRepository;
 
   Future<void> resendVerificationCode() async {
     emit(state.copyWith(status: BlocCubitStatus.loading, verifyingCode: false));
     try {
-      await userRepository.resendVerificationCode(email: state.email);
+      await userRepository.sendVerificationCode(
+        registerFlow: state.registerFlow,
+        email: state.email,
+      );
       emit(state.copyWith(status: BlocCubitStatus.success));
     } on Exception {
       emit(state.copyWith(status: BlocCubitStatus.failure));
@@ -26,7 +30,11 @@ class UserVerifyCodeCubit extends Cubit<UserVerifyCodeState> {
   Future<void> submit(String code) async {
     emit(state.copyWith(status: BlocCubitStatus.loading, verifyingCode: true));
     try {
-      await userRepository.verifyCode(email: state.email, code: code);
+      await userRepository.verifyCode(
+        registerFlow: state.registerFlow,
+        email: state.email,
+        code: code,
+      );
       emit(state.copyWith(status: BlocCubitStatus.success));
     } on Exception {
       emit(state.copyWith(status: BlocCubitStatus.failure));

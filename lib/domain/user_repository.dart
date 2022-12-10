@@ -27,23 +27,63 @@ class UserRepository {
   final SharedPreferences sharedPreferences;
   final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
 
+  /// Get the string value by cache key from [SharedPreferences].
+  String? _getCacheString(String key) => sharedPreferences.getString(key);
+
+  /// Set the string value by cache key from [SharedPreferences],
+  /// or remove the value by passing the empty value.
+  Future<void> _setCacheString(
+    String key,
+    String? value, {
+    String? emptyValue = '',
+  }) =>
+      value != emptyValue
+          ? sharedPreferences.setString(key, value!)
+          : sharedPreferences.remove(key);
+
   /// Get the token of the user from [SharedPreferences].
-  String? getToken() => sharedPreferences.getString('token');
+  String? getToken() => _getCacheString('token');
 
   /// Set the token of the user from [SharedPreferences],
   /// or remove the token by passing null.
-  Future<void> setToken(String? token) => token != null
-      ? sharedPreferences.setString('token', token)
-      : sharedPreferences.remove('token');
+  Future<void> setToken(String? token) => _setCacheString(
+        'token',
+        token,
+        emptyValue: null,
+      );
 
-  /// Get the email of the user from [SharedPreferences].
-  String getEmail() => sharedPreferences.getString('email') ?? '';
+  /// Get the email of the user from [SharedPreferences],
+  /// during registering flow.
+  String getEmail() => _getCacheString('email') ?? '';
 
   /// Set the email of the user from [SharedPreferences],
-  /// or remove the email by passing empty string.
-  Future<void> setEmail(String email) => email != ''
-      ? sharedPreferences.setString('email', email)
-      : sharedPreferences.remove('email');
+  /// or remove the email by passing an empty string,
+  /// during registering flow.
+  Future<void> setEmail(String email) => _setCacheString('email', email);
+
+  /// Get the email of the user from [SharedPreferences],
+  /// during forgetting-password flow.
+  String getForgetEmail() => _getCacheString('forget_email') ?? '';
+
+  /// Set the email of the user from [SharedPreferences],
+  /// or remove the email by passing an empty string,
+  /// during forgetting-password flow.
+  Future<void> setForgetEmail(String email) => _setCacheString(
+        'forget_email',
+        email,
+      );
+
+  /// Get the verification code of the user from [SharedPreferences],
+  /// during forgetting-password flow.
+  String getForgetCode() => sharedPreferences.getString('forget_code') ?? '';
+
+  /// Set the verification code of the user from [SharedPreferences],
+  /// or remove the verification code by passing empty string,
+  /// during forgetting-password flow.
+  Future<void> setForgetCode(String code) => _setCacheString(
+        'forget_code',
+        code,
+      );
 
   /// Get the user from [SharedPreferences].
   User? getUser() {
@@ -90,15 +130,17 @@ class UserRepository {
     }
   }
 
-  /// Resend verification code for a registered user.
+  /// Send verification code for a registering,
+  /// or registered user but forgot password.
   ///
   /// Throws a [UserException] if an error occurs.
-  Future<void> resendVerificationCode({
+  Future<void> sendVerificationCode({
+    required bool registerFlow,
     required String email,
   }) async {
     try {
       await _onesBlogApiClient.store(
-        uri: 'resend-verification-code',
+        uri: registerFlow ? 'resend-verification-code' : 'forgot-password',
         inputParams: {
           'email': email,
         },
@@ -108,27 +150,53 @@ class UserRepository {
     }
   }
 
-  /// Verify code for a registered user.
+  /// Verify code for a registering user,
+  /// or registered user but forgot password.
   ///
   /// Throws a [UserException] if an error occurs.
-  Future<User> verifyCode({
+  Future<void> verifyCode({
+    required bool registerFlow,
     required String email,
     required String code,
   }) async {
     try {
-      final user = User.fromJson(
-        await _onesBlogApiClient.store(
-          uri: 'verify-code',
-          inputParams: {
-            'email': email,
-            'code': code,
-          },
-        ) as Map<String, dynamic>,
+      await _onesBlogApiClient.store(
+        uri: registerFlow ? 'verify-code' : 'check-code',
+        inputParams: {
+          'email': email,
+          'code': code,
+        },
       );
+      if (registerFlow) {
+        await setEmail('');
+      } else {
+        await setForgetEmail(email);
+        await setForgetCode(code);
+      }
+    } on Exception {
+      throw UserException();
+    }
+  }
 
-      await setEmail('');
-
-      return user;
+  /// Reset password for the verified user from [SharedPreferences].
+  ///
+  /// Throws a [UserException] if an error occurs.
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String password,
+  }) async {
+    try {
+      await _onesBlogApiClient.store(
+        uri: 'reset-password',
+        inputParams: {
+          'email': email,
+          'code': code,
+          'password': password,
+        },
+      );
+      await setForgetEmail('');
+      await setForgetCode('');
     } on Exception {
       throw UserException();
     }
