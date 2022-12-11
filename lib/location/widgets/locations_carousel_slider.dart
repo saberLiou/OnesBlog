@@ -79,7 +79,9 @@ class _LocationsCarouselSliderViewState
   /// A method that launches the [LocationShowPage],
   /// and awaits for Navigator.pop.
   Future<void> _navigateLocationShowPage(
-      BuildContext context, Location location) async {
+    BuildContext context,
+    Location location,
+  ) async {
     /// Navigator.push returns a Future that completes after calling
     /// Navigator.pop on the LocationShowPage Screen.
     final result = await Navigator.push(

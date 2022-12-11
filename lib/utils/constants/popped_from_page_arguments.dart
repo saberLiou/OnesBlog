@@ -1,6 +1,7 @@
 enum PoppedFromPage {
   userVerifyCode,
   showLocation,
+  storeLocation,
   selectLocation,
   addPost,
   updateUser;

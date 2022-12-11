@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,12 +17,12 @@ import 'package:ones_blog/domain/location_repository.dart';
 import 'package:ones_blog/domain/user_repository.dart';
 import 'package:ones_blog/home/view/home_page.dart';
 import 'package:ones_blog/l10n/l10n.dart';
-import 'package:ones_blog/location/show/location_show.dart';
 import 'package:ones_blog/location/store/location_store.dart';
 import 'package:ones_blog/location/widgets/location_category_select.dart';
 import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/app_duration.dart';
 import 'package:ones_blog/utils/app_text_style.dart';
+import 'package:ones_blog/utils/constants/popped_from_page_arguments.dart';
 import 'package:ones_blog/utils/constants/space_unit.dart';
 import 'package:ones_blog/utils/enums/bloc_cubit_status.dart';
 import 'package:ones_blog/utils/enums/location_category.dart';
@@ -29,7 +32,7 @@ import 'package:ones_blog/utils/size_handler.dart';
 class LocationStorePage extends StatelessWidget {
   const LocationStorePage({super.key});
 
-  static Route<LocationStorePage> route(Location? location) =>
+  static Route<PoppedFromPageArguments> route(Location? location) =>
       MaterialPageRoute(
         builder: (context) => BlocProvider<LocationStoreCubit>.value(
           value: LocationStoreCubit(
@@ -67,8 +70,6 @@ class _LocationStoreViewState extends State<LocationStoreView> {
   TimeOfDay? startTime = const TimeOfDay(hour: 0, minute: 0);
   TimeOfDay? endTime = const TimeOfDay(hour: 0, minute: 0);
 
-  final List<XFile>? imageFileList = [];
-
   @override
   void initState() {
     super.initState();
@@ -101,7 +102,7 @@ class _LocationStoreViewState extends State<LocationStoreView> {
   Widget build(BuildContext context) {
     SizeHandler.init(context);
     final l10n = context.l10n;
-    final locationCreateCubit = context.read<LocationStoreCubit>();
+    final locationStoreCubit = context.read<LocationStoreCubit>();
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -122,22 +123,26 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                   );
                   break;
                 case BlocCubitStatus.success:
-                  final updated = state.location != null;
                   EasyLoading.showSuccess(
-                    updated
+                    state.isEditing
                         ? l10n.submittedSuccessMessage
                         : l10n.becomeLocationSuccessMessage,
-                    duration: updated ? AppDuration.short : AppDuration.long,
+                    duration:
+                        state.isEditing ? AppDuration.short : AppDuration.long,
                   );
-                  Navigator.pushReplacement(
-                    context,
-                    updated
-                        ? LocationShowPage.route(
-                            location: state.location!,
-                            fromMenu: true,
-                          )
-                        : HomePage.route(),
-                  );
+                  if (state.isEditing) {
+                    Navigator.pop(
+                      context,
+                      PoppedFromPageArguments(
+                        page: PoppedFromPage.storeLocation,
+                        arguments: {
+                          'submitted': true,
+                        },
+                      ),
+                    );
+                  } else {
+                    Navigator.pushReplacement(context, HomePage.route());
+                  }
                   break;
                 case BlocCubitStatus.failure:
                   EasyLoading.showError(
@@ -173,8 +178,8 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                             child: Column(
                               children: [
                                 LocationCategorySelect(
-                                  onChanged: (value) => locationCreateCubit
-                                      .selectLocationCategory(
+                                  onChanged: (value) =>
+                                      locationStoreCubit.selectLocationCategory(
                                     value! as LocationCategory,
                                   ),
                                   l10n: l10n,
@@ -183,13 +188,15 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                   ),
                                 ),
                                 Container(
-                                  height: 2.0,
+                                  height: SpaceUnit.quarterBase,
                                   width: 280,
-                                  color: Color.fromRGBO(222, 215, 209, 1),
+                                  color: AppColors.primary,
                                 ),
                                 Container(
-                                  margin:
-                                      EdgeInsets.only(top: 20.0, bottom: 10.0),
+                                  margin: const EdgeInsets.only(
+                                    top: 20,
+                                    bottom: 10,
+                                  ),
                                   width: 300,
                                   height: 40,
                                   child: TextFormField(
@@ -199,8 +206,7 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                       fillColor: Colors.white,
                                       hintText: '店家名稱',
                                       border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
+                                        borderRadius: BorderRadius.circular(20),
                                         borderSide: BorderSide.none,
                                       ),
                                     ),
@@ -213,13 +219,15 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                   ),
                                 ),
                                 Container(
-                                  height: 2.0,
+                                  height: SpaceUnit.quarterBase,
                                   width: 280,
-                                  color: Color.fromRGBO(222, 215, 209, 1),
+                                  color: AppColors.primary,
                                 ),
                                 Container(
-                                  margin:
-                                      EdgeInsets.only(top: 20.0, bottom: 10.0),
+                                  margin: const EdgeInsets.only(
+                                    top: 20,
+                                    bottom: 10,
+                                  ),
                                   width: 300,
                                   height: 40,
                                   child: Padding(
@@ -233,7 +241,7 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                         border: InputBorder.none,
                                       ),
                                       onChanged: (state.location == null)
-                                          ? (value) => locationCreateCubit
+                                          ? (value) => locationStoreCubit
                                               .selectCity(value! as int)
                                           : null,
                                       value: state.cityId,
@@ -254,13 +262,15 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                   ),
                                 ),
                                 Container(
-                                  height: 2.0,
+                                  height: SpaceUnit.quarterBase,
                                   width: 280,
-                                  color: Color.fromRGBO(222, 215, 209, 1),
+                                  color: AppColors.primary,
                                 ),
                                 Container(
-                                  margin:
-                                      EdgeInsets.only(top: 20.0, bottom: 10.0),
+                                  margin: const EdgeInsets.only(
+                                    top: 20,
+                                    bottom: 10,
+                                  ),
                                   width: 300,
                                   height: 40,
                                   child: Padding(
@@ -274,7 +284,7 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                         border: InputBorder.none,
                                       ),
                                       onChanged: (state.location == null)
-                                          ? (value) => locationCreateCubit
+                                          ? (value) => locationStoreCubit
                                               .selectCityArea(value! as int)
                                           : null,
                                       value: state.cityAreaId,
@@ -295,13 +305,15 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                   ),
                                 ),
                                 Container(
-                                  height: 2.0,
+                                  height: SpaceUnit.quarterBase,
                                   width: 280,
-                                  color: Color.fromRGBO(222, 215, 209, 1),
+                                  color: AppColors.primary,
                                 ),
                                 Container(
-                                  margin:
-                                      EdgeInsets.only(top: 20.0, bottom: 10.0),
+                                  margin: const EdgeInsets.only(
+                                    top: 20,
+                                    bottom: 10,
+                                  ),
                                   width: 300,
                                   height: 40,
                                   child: TextFormField(
@@ -311,8 +323,7 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                       fillColor: Colors.white,
                                       hintText: '地址',
                                       border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
+                                        borderRadius: BorderRadius.circular(20),
                                         borderSide: BorderSide.none,
                                       ),
                                     ),
@@ -325,13 +336,15 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                   ),
                                 ),
                                 Container(
-                                  height: 2.0,
+                                  height: SpaceUnit.quarterBase,
                                   width: 280,
-                                  color: Color.fromRGBO(222, 215, 209, 1),
+                                  color: AppColors.primary,
                                 ),
                                 Container(
-                                  margin:
-                                      EdgeInsets.only(top: 20.0, bottom: 10.0),
+                                  margin: const EdgeInsets.only(
+                                    top: 20,
+                                    bottom: 10,
+                                  ),
                                   width: 300,
                                   height: 40,
                                   child: TextFormField(
@@ -342,8 +355,7 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                       fillColor: Colors.white,
                                       hintText: '電話/手機',
                                       border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
+                                        borderRadius: BorderRadius.circular(20),
                                         borderSide: BorderSide.none,
                                       ),
                                     ),
@@ -356,10 +368,10 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                   ),
                                 ),
                                 Container(
-                                  margin: EdgeInsets.only(bottom: 10.0),
-                                  height: 2.0,
+                                  margin: const EdgeInsets.only(bottom: 10),
+                                  height: SpaceUnit.quarterBase,
                                   width: 280,
-                                  color: Color.fromRGBO(222, 215, 209, 1),
+                                  color: AppColors.primary,
                                 ),
                                 // TODO: 新增營業時間
                                 // Text(
@@ -497,7 +509,7 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                 //   color: Color.fromRGBO(222, 215, 209, 1),
                                 // ),
                                 Container(
-                                  margin: EdgeInsets.only(bottom: 10.0),
+                                  margin: const EdgeInsets.only(bottom: 10),
                                   width: 300,
                                   height: 280,
                                   child: TextFormField(
@@ -507,22 +519,54 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                       fillColor: Colors.white,
                                       hintText: '簡介',
                                       border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
+                                        borderRadius: BorderRadius.circular(20),
                                         borderSide: BorderSide.none,
                                       ),
                                     ),
                                   ),
                                 ),
                                 const Spacer(),
-                                // TODO: preview location images.
-                                ImagesPicker(imageFileList: imageFileList),
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    bottom: SpaceUnit.base,
+                                  ),
+                                  child: CarouselSlider(
+                                    options: CarouselOptions(
+                                      enlargeCenterPage: true,
+                                    ),
+                                    items: [
+                                      for (final image
+                                          in state.images ?? <String>[]) ...[
+                                        Image.file(
+                                          File(image),
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                                ImagesPicker(
+                                  onPickedFromGallery: () async => ImagePicker()
+                                      .pickMultiImage()
+                                      .then((images) {
+                                    Navigator.pop(context);
+                                    if (images.isNotEmpty) {
+                                      locationStoreCubit.imagesPicked(images);
+                                    }
+                                  }),
+                                  onPickedFromCamera: () async => ImagePicker()
+                                      .pickImage(source: ImageSource.camera)
+                                      .then((image) {
+                                    Navigator.pop(context);
+                                    if (image != null) {
+                                      locationStoreCubit.imagesPicked([image]);
+                                    }
+                                  }),
+                                ),
                               ],
                             ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -530,10 +574,17 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                 height: SpaceUnit.base * 7,
                                 width: SpaceUnit.base * 11,
                                 title: l10n.cancel,
-                                onPressed: () => Navigator.pushReplacement(
-                                  context,
-                                  HomePage.route(),
-                                ),
+                                onPressed: () => state.isEditing
+                                    ? Navigator.pop(
+                                        context,
+                                        PoppedFromPageArguments(
+                                          page: PoppedFromPage.storeLocation,
+                                        ),
+                                      )
+                                    : Navigator.pushReplacement(
+                                        context,
+                                        HomePage.route(),
+                                      ),
                               ),
                               AppButton(
                                 height: SpaceUnit.base * 7,
@@ -541,15 +592,14 @@ class _LocationStoreViewState extends State<LocationStoreView> {
                                 title: l10n.submit,
                                 onPressed: () {
                                   FocusScope.of(context).unfocus();
-                                  if (locationCreateCubit.state.cityAreaId ==
-                                      null) {
+                                  if (state.cityAreaId == null) {
                                     EasyLoading.showInfo(
                                       l10n.emptyCityAndAreaMessage,
                                       duration: AppDuration.short,
                                     );
                                   } else if (_formKey.currentState!
                                       .validate()) {
-                                    locationCreateCubit.submit(
+                                    locationStoreCubit.submit(
                                       name: _nameController.value.text,
                                       address: _addressController.value.text,
                                       phone: _phoneController.value.text,

@@ -67,11 +67,13 @@ class OnesBlogApiClient {
     required String uri,
     required Map<String, dynamic>? inputParams,
     String? token,
+    List<String>? images,
   }) async =>
       (await _post(
         Uri.https(_baseUrl, _prefix(uri)),
         inputParams,
         token,
+        images,
       ))
           .data;
 
@@ -79,11 +81,13 @@ class OnesBlogApiClient {
     required String uri,
     required Map<String, dynamic>? inputParams,
     String? token,
+    List<String>? images,
   }) async =>
       (await _put(
         Uri.https(_baseUrl, _prefix(uri)),
         inputParams,
         token,
+        images,
       ))
           .data;
 
@@ -125,58 +129,105 @@ class OnesBlogApiClient {
     Uri uri,
     Map<String, dynamic>? body,
     String? token,
+    List<String>? images,
   ) async {
-    http.Response response;
+    final headers = {
+      HttpHeaders.acceptHeader: ContentType.json.toString(),
+      if (token != null) ...{
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      },
+      if (images != null) ...{
+        HttpHeaders.contentTypeHeader: 'multipart/form-data',
+      }
+    };
+    int responseStatusCode;
+    String responseBody;
 
     try {
-      response = await _httpClient.post(
-        uri,
-        headers: {
-          HttpHeaders.acceptHeader: ContentType.json.toString(),
-          if (token != null) ...{
-            HttpHeaders.authorizationHeader: 'Bearer $token',
-          }
-        },
-        body: body,
-      );
+      if (images == null) {
+        final response = await _httpClient.post(
+          uri,
+          headers: headers,
+          body: body,
+        );
+        responseStatusCode = response.statusCode;
+        responseBody = response.body;
+      } else {
+        final request = http.MultipartRequest('POST', uri)
+          ..headers.addAll(headers);
+        body?.forEach((key, value) => request.fields[key] = value.toString());
+        for (final imagePath in images) {
+          request.files.add(
+            await http.MultipartFile.fromPath('images[]', imagePath),
+          );
+        }
+        final response = await request.send();
+        responseStatusCode = response.statusCode;
+        responseBody = await response.stream.bytesToString();
+      }
     } catch (_) {
       throw HttpException();
     }
 
-    if (![200, 201].contains(response.statusCode)) {
-      throw HttpRequestFailure(response.statusCode);
+    if (![200, 201].contains(responseStatusCode)) {
+      throw HttpRequestFailure(responseStatusCode);
     }
 
-    return _decodeResponseBody(response.body);
+    return _decodeResponseBody(responseBody);
   }
 
   Future<Response> _put(
     Uri uri,
     Map<String, dynamic>? body,
     String? token,
+    List<String>? images,
   ) async {
-    http.Response response;
+    final headers = {
+      HttpHeaders.acceptHeader: ContentType.json.toString(),
+      if (token != null) ...{
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      },
+      if (images != null) ...{
+        HttpHeaders.contentTypeHeader: 'multipart/form-data',
+      }
+    };
+    int responseStatusCode;
+    String responseBody;
 
     try {
-      response = await _httpClient.put(
-        uri,
-        headers: {
-          HttpHeaders.acceptHeader: ContentType.json.toString(),
-          if (token != null) ...{
-            HttpHeaders.authorizationHeader: 'Bearer $token',
-          }
-        },
-        body: body,
-      );
+      if (images == null) {
+        final response = await _httpClient.put(
+          uri,
+          headers: headers,
+          body: body,
+        );
+        responseStatusCode = response.statusCode;
+        responseBody = response.body;
+      } else {
+        final request = http.MultipartRequest('POST', uri)
+          ..headers.addAll(headers);
+        if (body != null) {
+          body['_method'] = 'PUT';
+          body.forEach((key, value) => request.fields[key] = value.toString());
+        }
+        for (final imagePath in images) {
+          request.files.add(
+            await http.MultipartFile.fromPath('images[]', imagePath),
+          );
+        }
+        final response = await request.send();
+        responseStatusCode = response.statusCode;
+        responseBody = await response.stream.bytesToString();
+      }
     } catch (_) {
       throw HttpException();
     }
 
-    if (response.statusCode != 200) {
-      throw HttpRequestFailure(response.statusCode);
+    if (responseStatusCode != 200) {
+      throw HttpRequestFailure(responseStatusCode);
     }
 
-    return _decodeResponseBody(response.body);
+    return _decodeResponseBody(responseBody);
   }
 
   Future<Response> _delete(

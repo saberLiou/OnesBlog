@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ones_blog/l10n/l10n.dart';
 import 'package:ones_blog/utils/app_colors.dart';
 import 'package:ones_blog/utils/constants/space_unit.dart';
@@ -8,10 +7,12 @@ import 'package:ones_blog/utils/constants/space_unit.dart';
 class ImagesPicker extends StatelessWidget {
   const ImagesPicker({
     super.key,
-    required this.imageFileList,
+    this.onPickedFromCamera,
+    this.onPickedFromGallery,
   });
 
-  final List<XFile>? imageFileList;
+  final GestureTapCallback? onPickedFromCamera;
+  final GestureTapCallback? onPickedFromGallery;
 
   @override
   Widget build(BuildContext context) {
@@ -40,14 +41,7 @@ class ImagesPicker extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   InkWell(
-                    onTap: () async =>
-                        ImagePicker().pickMultiImage().then((images) {
-                      Navigator.pop(context);
-                      if (images.isNotEmpty) {
-                        imageFileList!.addAll(images);
-                        print(images);
-                      }
-                    }),
+                    onTap: onPickedFromGallery,
                     child: ListTile(
                       title: Text(l10n.fromGallery),
                       leading: const Icon(
@@ -62,14 +56,7 @@ class ImagesPicker extends StatelessWidget {
                     color: AppColors.primary,
                   ),
                   InkWell(
-                    onTap: () async => ImagePicker()
-                        .pickImage(source: ImageSource.camera)
-                        .then((image) {
-                      Navigator.pop(context);
-                      if (image != null) {
-                        print(image);
-                      }
-                    }),
+                    onTap: onPickedFromCamera,
                     child: ListTile(
                       title: Text(l10n.fromCamera),
                       leading: const Icon(

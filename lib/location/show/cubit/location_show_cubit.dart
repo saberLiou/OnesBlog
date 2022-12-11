@@ -64,6 +64,13 @@ class LocationShowCubit extends Cubit<LocationShowState> {
     }
   }
 
+  void refreshLocation() => emit(
+    state.copyWith(
+      initStatus: BlocCubitStatus.initial,
+      location: userRepository.getUser()!.location,
+    ),
+  );
+
   void setRate(double score) => emit(state.copyWith(score: score));
 
   Future<void> like() async {

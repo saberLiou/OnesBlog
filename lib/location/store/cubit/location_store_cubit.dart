@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ones_blog/data/models/city.dart';
 import 'package:ones_blog/data/models/city_area.dart';
 import 'package:ones_blog/data/models/location.dart';
@@ -86,6 +87,14 @@ class LocationStoreCubit extends Cubit<LocationStoreState> {
   void selectCityArea(int cityAreaId) =>
       emit(state.copyWith(cityAreaId: cityAreaId));
 
+  void imagesPicked(List<XFile> images) {
+    emit(
+      state.copyWith(
+        images: images.map((image) => image.path).toList(),
+      ),
+    );
+  }
+
   Future<void> submit({
     required String name,
     required String address,
@@ -103,6 +112,7 @@ class LocationStoreCubit extends Cubit<LocationStoreState> {
         address: address,
         phone: phone,
         introduction: introduction,
+        images: (state.images ?? []).isNotEmpty ? state.images : null,
       );
 
       await userRepository.getAuthUser();

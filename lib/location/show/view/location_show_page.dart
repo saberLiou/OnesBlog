@@ -50,8 +50,36 @@ class LocationShowPage extends StatelessWidget {
   Widget build(BuildContext context) => const LocationShowView();
 }
 
-class LocationShowView extends StatelessWidget {
+class LocationShowView extends StatefulWidget {
   const LocationShowView({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _LocationShowViewState();
+}
+
+class _LocationShowViewState extends State<LocationShowView> {
+  /// A method that launches the [LocationStorePage],
+  /// and awaits for Navigator.pop.
+  Future<void> _navigateLocationStorePage(
+    BuildContext context,
+    Location location,
+  ) async {
+    /// Navigator.push returns a Future that completes after calling
+    /// Navigator.pop on the LocationStorePage Screen.
+    final result = await Navigator.push(
+      context,
+      LocationStorePage.route(location),
+    );
+
+    /// When a BuildContext is used from a StatefulWidget, the mounted property
+    /// must be checked after an asynchronous gap.
+    if (!mounted) return;
+
+    if (result?.page == PoppedFromPage.storeLocation &&
+        (result!.arguments?['submitted'] as bool? ?? false)) {
+      context.read<LocationShowCubit>().refreshLocation();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,9 +147,9 @@ class LocationShowView extends StatelessWidget {
                                 Container()
                             else
                               IconButton(
-                                onPressed: () => Navigator.push(
+                                onPressed: () => _navigateLocationStorePage(
                                   context,
-                                  LocationStorePage.route(state.location),
+                                  state.location,
                                 ),
                                 icon: const Icon(
                                   Icons.edit,
@@ -170,8 +198,7 @@ class LocationShowView extends StatelessWidget {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          // TODO: 店家資訊頁的多圖輪播
-                          if (state.fromMenu)
+                          if ((state.location.images ?? []).isEmpty)
                             Container(
                               child: LocationCategory.getById(
                                 state.location.categoryId,
@@ -215,10 +242,21 @@ class LocationShowView extends StatelessWidget {
                                   width: 48,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Color.fromRGBO(184, 197, 181, 1),
+                                    color: const Color.fromRGBO(
+                                      184,
+                                      197,
+                                      181,
+                                      1,
+                                    ),
                                     border: Border.all(
-                                        color: Color.fromRGBO(169, 179, 146, 1),
-                                        width: 3.0),
+                                      color: const Color.fromRGBO(
+                                        169,
+                                        179,
+                                        146,
+                                        1,
+                                      ),
+                                      width: 3,
+                                    ),
                                   ),
                                   child: IconButton(
                                     onPressed: () {
@@ -243,7 +281,11 @@ class LocationShowView extends StatelessWidget {
                                                 const Icon(
                                               Icons.star,
                                               color: Color.fromRGBO(
-                                                  241, 208, 10, 1),
+                                                241,
+                                                208,
+                                                10,
+                                                1,
+                                              ),
                                             ),
                                             onRatingUpdate:
                                                 locationShowCubit.setRate,
@@ -294,7 +336,10 @@ class LocationShowView extends StatelessWidget {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
-                                top: 30, left: 40, right: 40),
+                              top: 30,
+                              left: 40,
+                              right: 40,
+                            ),
                             child: Text(state.location.introduction ?? ''),
                           ),
                         ],

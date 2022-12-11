@@ -10,16 +10,20 @@ class LocationStoreState extends Equatable {
     this.cityId,
     this.cityAreas,
     this.cityAreaId,
+    this.images,
   });
 
   final BlocCubitStatus initStatus;
   final BlocCubitStatus status;
   final Location? location;
+
+  bool get isEditing => location != null;
   final LocationCategory locationCategory;
   final List<City>? cities;
   final int? cityId;
   final List<CityArea>? cityAreas;
   final int? cityAreaId;
+  final List<String>? images;
 
   LocationStoreState copyWith({
     BlocCubitStatus? initStatus,
@@ -30,6 +34,7 @@ class LocationStoreState extends Equatable {
     int? cityId,
     List<CityArea>? cityAreas,
     int? cityAreaId,
+    List<String>? images,
   }) =>
       LocationStoreState(
         initStatus: initStatus ?? this.initStatus,
@@ -40,6 +45,7 @@ class LocationStoreState extends Equatable {
         cityId: cityId ?? this.cityId,
         cityAreas: cityAreas ?? this.cityAreas,
         cityAreaId: cityAreaId != -1 ? cityAreaId ?? this.cityAreaId : null,
+        images: images ?? this.images,
       );
 
   @override
@@ -52,5 +58,6 @@ class LocationStoreState extends Equatable {
         cityId,
         cityAreas,
         cityAreaId,
+        images,
       ];
 }

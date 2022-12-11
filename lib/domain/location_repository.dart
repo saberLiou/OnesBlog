@@ -63,7 +63,8 @@ class LocationRepository {
   Future<Location?> getLocation(int id) async {
     try {
       return Location.fromJson(
-        await _onesBlogApiClient.get(uri: '$_endpoint/$id') as Map<String, dynamic>,
+        await _onesBlogApiClient.get(uri: '$_endpoint/$id')
+            as Map<String, dynamic>,
       );
     } on Exception {
       throw LocationException();
@@ -82,6 +83,7 @@ class LocationRepository {
     required String address,
     required String phone,
     String? introduction,
+    List<String>? images,
   }) async {
     try {
       return Location.fromJson(
@@ -97,6 +99,7 @@ class LocationRepository {
                   'introduction': introduction,
                 },
                 token: token,
+                images: images,
               )
             : await _onesBlogApiClient.update(
                 uri: '$_endpoint/$id',
@@ -109,6 +112,7 @@ class LocationRepository {
                   'introduction': introduction,
                 },
                 token: token,
+                images: images,
               )) as Map<String, dynamic>,
       );
     } on Exception {
@@ -129,7 +133,7 @@ class LocationRepository {
       ))
           .map(
             (dynamic model) => Location.fromJson(model as Map<String, dynamic>),
-      )
+          )
           .toList();
     } on Exception {
       throw LocationException();
